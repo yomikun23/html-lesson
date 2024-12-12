@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body{
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        min-height:100vh;
+        background:url(background.avif);
+        background-size:cover;
+      }
+      .login1{
+        display:flex;
+        justify-content:center;
+        margin-bottom:15px;
+      align-items:start;
+      }
+  
+    .email,.name{
+      border-style:solid;
+      border-width:2px;
+      font-size:16px;
+      border-color:black;
+      width:200px;
+      border-radius:50px;
+      background:transparent;
+     
+    }
+
+    .name::placeholder{
+      padding-left:10px;
+      color:black;
+    }
+
+    .email::placeholder{
+      padding-left:10px;
+      color:black;
+    }
+
+    .maindiv{
+border-style:solid;
+ border-width:1px;
+ border-radius:3px;
+ padding:10px;
+ background:url(login.avif);
+ background-size:cover;
+    }
+
+    .divname{
+      margin-bottom:8px;
+      margin-top:8px;
+    }
+
+    .login{
+      margin:0;
+      color:whitesmoke;
+      font-style:italic;
+      text-decoration:underline;
+      transition:0.15s;
+      opacity:0mm;
+    }
+    .login:hover{
+      cursor:pointer;
+      color:black;
+    }
+
+    .signin:active{
+     background-color:black;
+     color:whitesmoke;
+    }
+
+    .divlogin{
+      display:flex;
+      justify-content:start;
+    }
+
+    .divsignin{
+      display:flex;
+      justify-content:end;
+    }
+
+    .lowerbody{
+      display:flex;
+      justify-content:space-between;
+    }
+
+    .signin{
+      background:transparent;
+      border-style:solid;
+      border-width:1px;
+      border-radius:2px;
+      margin-top:4px;
+      opacity:0.4mm;
+      transition:0.15em;
+    }
+
+    .signin:hover{
+      cursor:pointer;
+      
+
+    }
+    </style>
+  </head>
+  <body>
+    <div class="maindiv">
+      <div class="login1">
+        Login
+      </div>
+      <div class="divname" > <input class="name" type="text" placeholder="name"> </div>
+      <div><input class="email" type="text" placeholder="Email"></div>
+      <div class="lowerbody">
+        <div class="divlogin">
+          <p class="login">login</p>
+        </div>
+        <div class="divsignin">
+          <a href="https://www.indigoyoga.net/">
+            <button class="signin">Sign in</button>
+          </a>
+         
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
