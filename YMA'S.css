@@ -1,0 +1,111 @@
+body {
+  padding-bottom:1000px;
+}
+
+
+.item {
+  height:300px;
+  width:200px;
+  object-fit: cover;
+
+}
+
+.name,.price,.add {
+ margin: 0;
+}
+
+.price {
+  margin-bottom:5px;
+}
+
+.add {
+  background-color:black;
+  color:azure;
+  border:none;
+  border-radius:3px;
+  height:30px;
+
+}
+
+.add:active {
+  color:black;
+  background-color:azure;
+  transition: 0.5ms;
+}
+
+.add:hover {
+  opacity:0.9;
+  cursor: pointer;
+}
+
+.firstdiv {
+  display:flex;
+ justify-content: space-between;
+ margin-bottom:8px;
+}
+
+.header {
+  display: flex;
+justify-content: space-between;
+align-items: center;
+height:40px;
+position: fixed;
+right:0;
+left:0;
+top:0;
+background-color:azure;
+color:black;
+}
+
+.logo {
+  font-size:20px;
+  font-style:oblique;
+  font-weight: bold;
+}
+
+.searchbar {
+  width:400px;
+  padding-top:4px;
+  border-radius:20px;
+  background-color:azure;
+  color:black;
+  border-style:solid;
+  border-color:rgb(26, 19, 19);
+}
+
+.searchbar::placeholder {
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow',
+   Arial, sans-serif;
+   box-shadow: inset;
+}
+
+ul {
+  font-size:small;
+  font-family: 'Courier New', Courier, monospace;
+  background-color: black;
+  color:azure;
+  list-style-type: none;
+  padding-bottom: 20px;
+  border-radius:4px;
+  padding-left:0;
+}
+li {
+padding-bottom:8px;
+font-family:arial;
+font-size:10px;
+}
+
+li:hover {
+  cursor:pointer;
+  text-decoration:underline;
+}
+
+.profile {
+  height:50px;
+  width:50px;
+}
+
+.portfolio {
+  display:inline-block;
+width: 100px;
+}
