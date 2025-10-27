@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>grandpa's bio</title>
+<style>
+  body{
+
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  margin:20px;
+  line-height:1.6em;
+  font-size:18px;
+padding-bottom: 1000px;
+  }
+
+  img{
+    height: 20rem;
+  }
+  .bio-section {
+    /* Initially hide the sections until the button is clicked */
+    display: none; 
+    margin-top: 20px;
+    padding: 15px;
+    border-left: 5px solid #0056b3; /* A nice highlight color */
+    background-color: #f9f9f9;
+  }
+
+  .intro-text {
+    background-color: #e6f0ff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+  }
+#nextButton {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s;
+  }
+
+  #nextButton:hover {
+    background-color: #0056b3;
+  }
+
+  #completionMessage {
+    display: none;
+    color: green;
+    font-weight: bold;
+    margin-top: 20px;
+  }
+ 
+</style>
+
+</head>
+<body>
+  <h1>Biography of Pa. Francis Ibukun Igbekoyi</h1>
+
+  <div class="intro-text">
+    <p>
+      Pa. Francis Ibukun Igbekoyi was a teacher, leader, and community pillar. Click the button below to journey through the key chapters of his incredible life, one section at a time!
+    </p>
+  </div>
+
+  <button id="nextButton">Start the Journey: Early Life</button>
+  
+  <p id="completionMessage">You've reached the end of the biography! What a life!</p>
+
+  <div id="section1" class="bio-section">
+    <h2>Chapter 1: The Foundation (1928 - 1959)</h2>
+    <p>
+      Pa. Francis Ibukun Igbekoyi was born into the noble family of the late Pa. Solomon Igbekoyi Omoniyi, a renowned blacksmith, and Princess Alice Mobolaji Omoniyi (née Adepehin) of Ojomo Lemikan Quarter, Ode-Irele, on the **28th of November, 1928**. He was the first child of his parents and was raised in an environment that valued hard work, discipline, and integrity.
+    </p>
+    <p>
+      He began his formal education at St. Peter’s Catholic Primary School Ode-Irele in 1945, obtaining the First School Leaving Certificate in 1953. His teaching journey started shortly after at Salvation Primary School, Ode-Irele, in 1954. His passion for professional growth then led him to Okitipupa Divisional Teachers’ Training College, Ode-Aye, where he earned the Grade III Teachers’ Certificate.
+    </p>
+    <p>
+      As a qualified teacher with the Okitipupa Divisional Council, he served at Local Authority Primary School, Mahin, and quickly rose to Assistant Headmaster at Salawa, and then **Headmaster** at L.A. School, Akotogbo, in 1959.
+    </p>
+  </div>
+
+  <div id="section2" class="bio-section">
+    <h2>Chapter 2: Academic Excellence and Leadership (1960 - 1975)</h2>
+    <p>
+      Always eager to expand his knowledge, he attended Apostolic Teachers’ Training College, Ilesha, earning the Grade II Teachers’ Certificate in 1960. He continued to lead, serving as Headmaster at L.A. Primary School, Ode-Irele, and L.A. Primary School, Ajagba.
+    </p>
+    <p>
+      Driven by his commitment to education, he achieved his G.C.E. Ordinary Level in 1968 and, impressively, his **G.C.E. Advanced Level in 1965**. This opened the door for him to join Manuwa Memorial Grammar School, Iju-Odo, as a Tutor.
+    </p>
+    <p>
+      His crowning academic achievement was gaining admission to the University of Ife (now Obafemi Awolowo University), where he obtained a **Bachelor’s Degree in Education (Geography) in 1969**. Following graduation, he was appointed a tutor in the Higher School Certificate (H.S.C.) classes at Aquinas College, Akure.
+    </p>
+    <p>
+      *Fun Fact: He was offered admission for postgraduate studies at the University of Adelaide, University of Melbourne (Australia), and the University of Tennessee (USA) in 1971, but unfortunately, ill health prevented him from accepting.*
+    </p>
+  </div>
+
+  <div id="section3" class="bio-section">
+    <h2>Chapter 3: The Administrator and Commissioner (1976 - 1991)</h2>
+    <p>
+      In 1976, Pa. F.I Igbekoyi was appointed the **Pioneer Vice Principal** of Community Grammar School, Igbotako, where he laid a solid foundation. His leadership journey continued as Principal in Community Grammar School, Igbobini, Comprehensive High School, Ode-Irele, and Okunmo High School, Igodan-Lisa.
+    </p>
+    <p>
+      His outstanding public service record led to a secondment to the Ministry of Education as Secretary to the Local Government Teaching Service Committee, Ifesowapo. The peak of his career came in 1987 when he was appointed as a **Commissioner** in the Teaching Service Commission, Ondo State, where he served meritoriously until 1991.
+    </p>
+  </div>
+
+  <div id="section4" class="bio-section">
+    <h2>Chapter 4: A Life of Service and Faith</h2>
+    <p>
+      Beyond the professional realm, Pa. Igbekoyi devoted his life to community and faith. He was an active contributor to civic leadership and served in numerous roles:
+    </p>
+    <nav>
+      <ol>
+        <li>Secretary General – Irele Catholic League.</li>
+        <li>Chairman – Irele Education Committee.</li>
+        <li>Chairman – Irele Community Development Council (1992).</li>
+        <li>Treasurer – All Nigerian Conference of Principals of Secondary Schools (1977–1985).</li>
+        <li>Secretary General – All Nigerian Catholic University Students (1967).</li>
+      </ol>
+    </nav>
+    <p>
+      He was a devoted Catholic, a faithful member of the Sacred Society of Our Lady Star of the Sea Catholic Church, Okitipupa. He was a man of peace, compassion, and wisdom, who served as the Patron of the Irele Progressive Union and a proud member of the Ikale Elites Club until his passing.
+    </p>
+  </div>
+
+
+<script>
+  // 1. Get references to the button and the sections
+  const nextButton = document.getElementById('nextButton');
+  const completionMessage = document.getElementById('completionMessage');
+
+  // List of section IDs in the order they should be revealed
+  const sections = ['section1', 'section2', 'section3', 'section4'];
+
+  // Current chapter index, starting at 0
+  let currentChapterIndex = 0; 
+  
+  // Array of button texts for the next step
+  const buttonTexts = [
+      "Continue to Chapter 2: Academic Excellence", // text for after revealing section1
+      "Continue to Chapter 3: The Commissioner",    // text for after revealing section2
+      "Continue to Chapter 4: A Life of Service",   // text for after revealing section3
+      "Finish Biography",                           // text for after revealing section4
+  ];
+
+  // 2. Define the function to show the next chapter
+  function showNextChapter() {
+      // Check if we have more chapters to show
+      if (currentChapterIndex < sections.length) {
+          // Get the ID of the section to show next
+          const nextSectionId = sections[currentChapterIndex];
+          
+          // Find the section element by its ID
+          const sectionElement = document.getElementById(nextSectionId);
+          
+          // Change the section's display property to 'block' to make it visible
+          sectionElement.style.display = 'block';
+
+          // Move to the next chapter for the next click
+          currentChapterIndex++;
+
+          // Update the button text for the next action, if there is one
+          if (currentChapterIndex < buttonTexts.length) {
+              nextButton.textContent = buttonTexts[currentChapterIndex];
+          }
+      }
+
+      // Check if we have shown ALL chapters (i.e., we are now at or past the array length)
+      if (currentChapterIndex >= sections.length) {
+          // Hide the button
+          nextButton.style.display = 'none';
+          
+          // Show the completion message
+          completionMessage.style.display = 'block';
+      }
+  }
+
+  // 3. Attach the function to the button's click event
+  // When the button is clicked, execute the showNextChapter function
+  nextButton.addEventListener('click', showNextChapter);
+</script>
+
+
+
+</body>
+</html>
