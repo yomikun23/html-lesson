@@ -1,0 +1,343 @@
+body{
+  padding:0;
+  margin: 0;
+  box-sizing: border-box;
+scroll-behavior: smooth;
+padding-bottom: 500px;
+background:linear-gradient(to right, magenta,gray);
+}
+
+
+
+
+.anchor:hover{
+  filter: brightness(3);
+}
+
+.photo1{
+  width: 20em;
+  height:25em;
+border-radius: 50px 0;
+  object-fit: cover;
+  margin: 20px 10px ;
+  box-shadow: 8px 8px 10px black;
+animation: grow 3s ease 0.5s ;
+}
+
+@keyframes grow{
+  0%{
+    transform: scaleY(0.5);
+    filter:blur(5px);
+    transition:2s;
+  }
+
+  100%{
+    transform:scaleY(1);
+    transition: 2s;
+  }
+
+}
+
+.title{
+  margin:0;
+  text-align: center;
+}
+
+.tributeheading{
+  margin: 0 0;
+  text-align: center;
+  position: relative;
+  top: 60px;
+  background-color: teal ;
+  box-shadow: 2px 4px 7px black ;
+}
+
+.body{
+   
+  background-color: teal;
+  height: 25em;
+  border-bottom-left-radius: 20px ;
+  border-bottom-right-radius: 20px ;
+    padding-bottom: 5px;
+  margin-bottom: 100px;
+  box-shadow: 8px 8px 15px rgb(0, 0, 116);
+}
+
+
+
+.firstdiv{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+h1,h3{
+  font-weight:600px;
+  font-size: 40px;
+  text-shadow: 2px 5px 11px gray;;
+}
+
+
+.div2{
+ display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo2{
+  height:20em;
+  width:auto;
+  object-fit: cover;
+  border-radius:12px;
+  box-shadow: 8px 8px 15px gray,
+              -8px -8px 15px magenta;
+ 
+}
+
+.content{
+  font-size:20px;
+  font-weight:300;
+  font-family:Georgia, 'Times New Roman', Times, serif;
+  max-width:40em;
+  min-width:20em;
+  overflow: hidden;
+ 
+}
+
+.picture1{
+  height:35em;
+  width:auto;
+  object-fit:cover;
+  box-shadow: 8px -8px 15px gray ;
+  display: inline;
+}
+
+.biography{
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.familysection{
+  width:100%;
+  height:100vh;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+
+
+
+}
+
+.gallery{
+  display:flex;
+  gap:25px;
+}
+
+.card{
+  width:225px;
+  height: 400px;
+  border-radius:16px;
+  overflow:hidden;
+  position:relative;
+  transition:0.5s;
+  cursor:pointer;
+}
+
+.card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  pointer-events: none;
+  transition:0.5s;
+}
+.card.layer {
+  background: linear-gradient(to top, rgba(0,0,0,1),rgba(0,0,0,0,));
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:75%;
+  opacity:0;
+  transition:0.3s;
+}
+.card .info{
+  position:absolute;
+  bottom:-50%;
+  padding:15px;
+  opacity:0;
+  transition:0.5s bottom, 1.75s opacity;
+}
+
+.info p{
+  font-size:14px;
+  margin-top:3px;
+}
+
+.card:hover,.card:hover img,.card:hover .layer{
+  transition:scale(1.1);
+}
+.card:hover .layer{
+  opacity:1;
+}
+.card:hover>.info{
+  bottom:0;
+  opacity:1;
+}
+.gallery:hover>.card:not(:hover){
+  filter:blur(5px);
+}
+
+ 
+.photo{
+  position: relative;
+  bottom: 30px;
+  text-align: center;
+}
+  .view{
+    height:5em;
+    width:9em;
+    background:linear-gradient(to right, teal,black);
+border-radius:4em;
+border:none;
+  }
+
+  .view:hover {
+    background: transparent;
+    cursor: pointer;
+    border-style: solid;
+    border-color: gray;
+  }
+
+  .lead{
+    text-decoration:none;
+    font-size:2em;
+    font-weight:20px;
+    color:magenta;
+  }
+.lead:hover{
+  color:black;
+}
+
+ 
+  
+    
+    @keyframes animate {
+      
+    	to {
+    		translate: calc(-5 * 10rem);
+    	}
+    }
+
+
+  @media screen and (max-width: 600px) {
+
+    /* Make the heading smaller */
+    h1, h3 {
+        font-size: 28px;
+    }
+
+    /* Stack flex containers vertically */
+    .firstdiv, .div2, .biography, .gallery {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 20px; /* Add some space between stacked elements */
+    }
+
+    /* Adjust image sizes for better fit on small screens */
+    .photo1 {
+        width: 18em;
+        height: 20em;
+        margin: 10px auto;
+    }
+
+    .photo2 {
+        height: 15em;
+        width: auto;
+    }
+
+    .picture1 {
+        height: 20em;
+        width: 90%;
+        margin-bottom: 20px;
+    }
+
+    /* Full width content and smaller font */
+    .content {
+        max-width: 90%;
+        min-width: unset;
+        font-size: 16px;
+        padding: 0 15px;
+        box-sizing: border-box;
+    }
+
+    /* Gallery adjustments */
+    .gallery {
+        gap: 15px;
+    }
+    .card {
+        width: 90%; /* Make cards take up most of the width */
+        height: 300px; /* Reduce card height */
+    }
+
+    /* Adjust the heading position */
+    .tributeheading {
+      top: 20px;
+      padding: 10px 0;
+    }
+
+    /* Adjust the main body section height */
+    .body {
+      height: auto;
+      min-height: 20em;
+    }
+}
+
+
+/* ----------------------------- TABLET DEVICES (<= 992px) --------------------------- */
+@media screen and (max-width: 992px) {
+
+    /* Stack the main biography section */
+    .biography {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        padding: 20px 0;
+    }
+
+    /* Adjust image sizes */
+    .photo1 {
+      width: 15em;
+      height: 20em;
+    }
+
+    .picture1 {
+      height: 30em;
+    }
+
+    /* Allow the content to take more space but keep it centered */
+    .content {
+        max-width: 80%;
+        min-width: unset;
+    }
+
+    /* Reduce gallery gap and make cards slightly larger for tablet viewing */
+    .gallery {
+      gap: 20px;
+      /* Allow gallery to wrap for multiple rows on smaller tablets */
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+        width: 45%; /* Two cards per row */
+        height: 350px;
+    }
+
+    /* Reduce overall font size for better tablet view */
+    h1, h3 {
+        font-size: 32px;
+    }
+}

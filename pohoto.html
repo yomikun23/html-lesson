@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>gallery section</title>
+
+<style>
+body{
+  box-sizing: border-box;
+  margin:0;
+  padding:0;
+}
+
+.heading{
+  position:fixed;
+  top:0;
+  right:0;
+  left:0;
+  background-color: teal;
+  color:whitesmoke;
+  text-align: center;
+  font-size: 4em;
+  font-weight: 700;
+  border-bottom-left-radius: 20px ;
+  border-bottom-right-radius: 20px ;
+}
+
+
+.wrapper{
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 4.5em;
+  }
+
+  @media screen and (max-width: 768px) {
+    .heading {
+        font-size: 2.5em;
+    }
+
+    .wrapper {
+        margin-top: 6em; 
+        justify-content: center; 
+    }
+
+    .wrapper img {
+        width: 48%; 
+        height: 15em !important; 
+        object-fit: cover;
+    }
+}
+@media screen and (max-width: 480px) {
+    .wrapper img {
+        width: 98%;
+        height: 12em !important;
+    }
+}
+
+</style>
+
+</head>
+<body>
+  <header class="heading">
+    Gallery
+  </header>
+
+  <section>
+<div class="wrapper" >
+  <img style="height: 20em;" src="bio.jpg" alt="">
+  <img style="height: 20rem;"src="top.jpg" alt="">
+  <img style="height: 20rem;" src="practice.jpg" alt="">
+  <img style="height: 20rem;" src="smile.jpg" alt="">
+ </div>
+<div class="wrapper" >
+  <img style="height: 20em;" src="kike.jpg" >
+  <img style="height: 20rem;"src="thestartup.jpg" alt="">
+  <img style="height: 20rem;" src="student.jpg" alt="">
+  <img style="height: 20rem;" src="bode.jpg" alt="">
+ </div>
+<div class="wrapper" >
+  <img style="height: 20em;" src="pikin.jpg" alt="">
+  <img style="height: 20rem;"src="junior.jpg" alt="">
+  <img style="height: 20rem;" src="familia.jpg" alt="">
+  <img style="height: 20rem;" src="children.jpg" alt="">
+ </div>
+<div class="wrapper" >
+  <img style="height: 20em;" src="young.jpg" alt="">
+  <img style="height: 20rem;"src="favour.jpg" alt="">
+  <img style="height: 20rem;" src="award.jpg" alt="">
+  <img style="height: 20rem;" src="one.jpg" alt="">
+ </div>
+<div class="wrapper" >
+  <img style="height: 20em;" src="u.jpg" alt="">
+  <img style="height: 20rem;"src="son.jpg" alt="">
+  <img style="height: 20rem;" src="young.jpg" alt="">
+  <img style="height: 20rem;" src="one.jpg" alt="">
+ </div>
+
+</section>
+
+ 
+</body>
+</html>
