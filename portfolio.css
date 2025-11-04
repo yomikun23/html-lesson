@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body{
+  margin:0;
+  padding: 0;
+font-family:"roboto",sans-serif;
+box-sizing:border-box;
+scroll-behavior: smooth;
+animation: fadeInBackground 1s ease-in-out;
+}
+
+@keyframes fadeInBackground {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.items{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:white;
+  background-color: rgb(255, 144, 9);
+  position:fixed;
+  right:0;
+  left:0;
+  top:0;
+  height:50px;
+  z-index:10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+ul{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+padding-left: 0; 
+}
+a{
+  
+ text-decoration: none;
+  color:white;
+}
+
+li{
+ 
+  list-style:none;
+  maRGIN-RIGHT:20px;
+}
+li:hover{
+  transform: scale(1.1);
+  transition:0.3s ease-in-out;
+cursor: pointer;
+}
+
+.myself{
+  margin-top:20px;
+  align-items: center;
+  display: flex;
+  gap:2rem;
+}
+
+.potrate{
+  width:400px;
+  height:400px;
+  border-radius:50%;
+  object-fit: cover;
+  transition: transform 0.4s ease-in-out;
+}
+
+.potrate:hover {
+  transform: scale(1.03);
+}
+
+.intro{
+  font-size:3rem;
+  text-wrap: wrap;
+}
+
+p{
+  font-size: 1rem;
+  text-wrap: wrap;
+}
+
+h3{
+  font-size: 2em;
+}
+
+.insta,.x,.wahts{
+  width:40px;
+  height:40px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.insta:hover, .x:hover, .wahts:hover {
+  transform: scale(1.2);
+}
+
+.text,.tweet,.chat{
+  display: flex;
+  align-items: center;
+  gap:8px;
+}
+
+.overall{
+  box-shadow: 0px 4px 8px gray   ;
+  position:relative;
+  top:60px;
+  padding:10px 8px;
+  animation: slideInFromTop 0.8s ease-out;
+}
+
+@keyframes slideInFromTop {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.aboutme{
+  margin-top:100px;
+}
+
+h4{
+  font-size: 50px;
+  text-align: center;
+  background-color:rgb(255, 144, 9) ;
+  margin-bottom: 0;
+  color:white;
+  transition: background-color 0.3s;
+}
+
+h4:hover {
+  background-color: rgb(255, 120, 0); 
+}
+
+.igbekoyi{
+margin-top: 8px;
+color:black;
+text-wrap:wrap;
+line-height: 20px;
+font-size:larger;
+padding:8px 10px;
+  
+}
+.foot{
+  background-color: rgb(255, 144, 9);
+  color: aliceblue;
+margin-top: 10rem;
+  height:100px;
+  transition: filter 0.3s ease-in-out;
+}
+
+.foot:hover{
+  cursor: pointer;
+  filter:brightness(1.1);
+}
+
+@media (max-width: 900px) {
+    .myself {
+        flex-direction: column; 
+        text-align: center;
+        gap: 1rem;
+    }
+    .potrate {
+        width: 250px;
+        height: 250px;
+    }
+    .intro {
+        font-size: 2rem;
+    }
+    h4 {
+        font-size: 40px;
+    }
+    
+    .items {
+        height: auto;
+        flex-direction: column;
+        padding-bottom: 5px;
+    }
+    .items h1 {
+        margin: 5px 0;
+    }
+    .items nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    li {
+        margin-right: 10px;
+    }
+    .overall {
+        top: 100px; 
+    }
+}
