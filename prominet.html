@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="prominet.css">
+</head>
+<body>
+  <header class="navbar">
+        <div class="logo">PROMINENT FUD</div>
+        <nav class="nav-links">
+            <a href="#Home">Home</a>
+            <a href="#featured">Featured</a> <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+            <button id="reserve-btn" class="cta-button">Order Now</button>
+        </nav>
+    </header>
+
+    <section id="Home" class="hero-section">
+        <div class="hero-content">
+            <h1>Artisan Bakery. Freshly Brewed.</h1>
+            <p>From freshly baked croissants to custom celebration cakes, taste the Prominent difference.</p>
+            <a href="#featured" class="cta-primary">See Our Featured Items</a>
+        </div>
+    </section>
+
+    <section id="featured" class="featured-section">
+        <h2 style="color:purple;">Our Daily Delights</h2>
+        <div class="gallery-grid">
+            <div class="item">
+                <img src="pastry3.jpg" alt="Vibrant Purple Cupcakes" class="gallery-image">
+                <h3>Signature Cupcakes</h3>
+                <p>Silky smooth frosting in unique, seasonal flavors.</p>
+            </div>
+            <div class="item">
+                <img src="pastry2.avif" alt="Assorted Mini Cupcakes" class="gallery-image">
+                <h3>Mini Treats Box</h3>
+                <p>Perfect for parties! Featuring chocolate, vanilla, and Oreo flavors.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about-section">
+        <h2 style="color:#fff;">Our Story</h2>
+        <div class="about-text">
+            <p>At **PROMINENT FUD**, we specialize in the art of baking. Every item is hand-crafted daily using the finest ingredients. We are passionate about creating memorable moments, whether it's your morning coffee and pastry or a show-stopping dessert for a celebration.</p>
+            <p>Come visit our cozy cafe and experience the true warmth of fresh baking.</p>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <div class="cake-cta-container">
+            <div class="cake-image-wrapper">
+                <img src="cake.jpg" alt="Custom Celebration Cake" class="cake-promo-image">
+            </div>
+            <div class="contact-details-wrapper">
+                <h2>Planning a Celebration?</h2>
+                <p class="promo-text">Let us craft the perfect custom cake for your next birthday, anniversary, or event. Personalized designs and flavors available.</p>
+                <button class="cta-primary large-cta">Design Your Custom Cake</button>
+                <div class="contact-info">
+                    <p>📍 123 Gourmet Lane, Food City</p>
+                    <p>📞 (555) 123-FUDD</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Prominent Fud. All rights reserved. | Follow Us on Social</p>
+    </footer>
+
+    <script src="script.js">
+
+// (Keep the previous script.js content here)
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Smooth Scrolling for Navigation Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // 2. Simple Order/Reserve Button Click Handler
+    const reserveButton = document.getElementById('reserve-btn');
+    reserveButton.addEventListener('click', () => {
+        alert('Your order request has been received! A staff member will contact you shortly.');
+        // In a real app, this would redirect to an ordering page.
+    });
+});
+    </script>
+
+</body>
+
+</html>

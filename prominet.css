@@ -1,0 +1,309 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* Use new fonts */
+    font-family: 'Roboto', sans-serif; 
+    line-height: 1.6;
+    color: #ffff;
+      background-color: #310e68;
+background-image: linear-gradient(316deg, #310e68 0%, #5f0f40 74%);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+/* Headings using the display font */
+h1, h2 {
+    font-family: 'Playfair Display', serif;
+  
+}
+
+/* --- Utility Classes --- */
+.cta-primary {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: purple; /* Rich Brown - Cafe/Bread color */
+    color: #fff;
+    border: none;
+    border-radius: 30px; /* Pill shape for a softer look */
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cta-primary:hover {
+    background-color: purple; 
+    transform: translateY(-2px);
+}
+
+/* --- 1. Navigation Bar --- */
+/* (Keep previous navbar styling, just update colors if needed) */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 5%;
+    color:purple;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 1.8em;
+    font-weight: 900;
+    color: purple;
+    letter-spacing: 2px;
+}
+
+.nav-links a {
+    margin-right: 25px;
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    filter: brightness(2);
+    transform: scale(1.5);
+}
+
+.cta-button {
+    padding: 8px 15px;
+    background-color: purple;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+/* --- 2. Hero Section (Image Integration) --- */
+.hero-section {
+    /* --- Image Integration --- */
+    background-image: url('pastry1.avif'); 
+    background-size: cover;
+    background-position: center top; 
+    /* ------------------------- */
+    min-height: 90vh; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    padding: 20px;
+    position: relative;
+    z-index: 1;
+    animation: drop-down 2s ease-in-out 0.2s;
+}
+
+@keyframes drop-down{
+  0%{
+    transform: translateY(-100%) ;
+    opacity: 0;
+  }
+  100%{
+    transform:translateY(0);
+    opacity: 1;
+  }
+}
+
+
+/* Darker overlay for text readability */
+.hero-section::before {
+    content: '' ;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4); 
+    z-index: -1;
+}
+
+.hero-content {
+    padding: 30px 40px;
+    /* Remove background here since we use ::before overlay */
+}
+
+.hero-content h1 {
+    font-size: 4em;
+    margin-bottom: 10px;
+}
+
+.hero-content p {
+    font-size: 1.4em;
+    margin-bottom: 40px;
+    font-weight: 300;
+}
+
+/* --- 3. Featured Items Section --- */
+.featured-section {
+    background-color: #fff;
+}
+
+.gallery-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.item {
+    flex: 1;
+    max-width: 400px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 300px; /* Fixed height for visual consistency */
+    object-fit: cover;
+}
+
+.item h3 {
+    font-family: 'Playfair Display', serif;
+    color: purple;
+    margin: 15px 0 5px;
+}
+
+.item p {
+    padding-bottom: 20px;
+    font-size: 0.95em;
+    color: #666;
+}
+
+
+/* --- General Content Sections (About) --- */
+section {
+    padding: 80px 5%;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+section h2 {
+    font-size: 2.5em;
+    margin-bottom: 40px;
+    color: #8B4513;
+}
+
+.about-text {
+    max-width: 700px;
+    margin: 0 auto;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.about-text p {
+    margin-bottom: 20px;
+}
+
+/* --- 5. Contact/CTA Section (Custom Cake Focus) --- */
+.contact-section {
+    background-color: #f5f5f5;
+    padding: 80px 0;
+}
+
+.cake-cta-container {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    max-width: 1000px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.cake-image-wrapper {
+    flex: 1;
+}
+
+.cake-promo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    min-height: 400px;
+}
+
+.contact-details-wrapper {
+    flex: 1;
+    padding: 40px;
+}
+
+.contact-details-wrapper h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.promo-text {
+    font-size: 1.1em;
+    margin-bottom: 25px;
+    color: #555;
+}
+
+.contact-info {
+    margin-top: 30px;
+    font-size: 1.1em;
+    font-weight: 500;
+}
+
+.contact-info p {
+    margin-bottom: 5px;
+}
+
+
+/* --- 📱 Mobile Responsiveness (Media Query) --- */
+@media (max-width: 768px) {
+    /* Navbar adjustments (from previous code) */
+    .navbar { flex-direction: column; }
+    .nav-links { margin-top: 10px; width: 100%; flex-direction: column; }
+    .nav-links a, .cta-button { margin: 5px 0; display: block; }
+    
+    .hero-content h1 { font-size: 3em; }
+    .hero-content p { font-size: 1.1em; }
+
+    /* Featured Section Mobile */
+    .gallery-grid {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .item {
+        max-width: 90%;
+        margin: 0 auto;
+    }
+
+    /* Contact/CTA Section Mobile */
+    .cake-cta-container {
+        flex-direction: column;
+    }
+
+    .cake-promo-image {
+        /* Fix image borders for mobile stacking */
+        border-radius: 10px 10px 0 0;
+    }
+
+    .contact-details-wrapper {
+        text-align: center;
+        padding: 30px;
+    }
+    .contact-info {
+        text-align: center;
+    }
+}
