@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body{
+    margin:0;
+    padding:0;
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+    font-family:'Roboto', sans-serif;
+}
+
+.heading{
+    position:relative;
+    right:0;
+    left:0;
+    top:0;
+    height:60vh;
+    box-shadow:0px 9px 20px rgba(0,0,0,0.2);
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    line-height:2;
+    background: #02011f;
+background: radial-gradient(circle, rgba(2, 1, 31, 1) 0%, rgba(19, 50, 102, 1) 35%, rgba(2, 247, 76, 1) 100%);
+}
+
+h1{
+font-family: 'Roboto', sans-serif;
+color:white;
+font-size:4em;
+margin: 0 0;
+font-weight:400;
+animation: fadein 2s ease-in 0.5s forwards
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.heading-content,.motto{
+    font-family: 'Roboto', sans-serif;
+    color:white;
+    font-size:1.5em;
+    margin: 0 0 20px 0;
+    font-weight:300;
+}
+
+h2{
+    font-family: 'Roboto', sans-serif;
+    color:white;
+    font-size:2em;
+    margin: 0 0;
+    font-weight:500;
+}
+
+.about-content{
+    font-family:'Roboto', sans-serif;
+    line-height:2;
+    padding:4em 5em;
+    margin: none;
+}
+
+b{
+    color:green;
+}
+
+h3{
+    margin: 0;
+    font-size: 4em;
+    font-family:'Roboto',sans-serif ;
+    text-align: center;
+}
+
+.the-journey{
+    margin-top:5em;
+    box-shadow: 9px 9px 20px black ;
+}
+
+.identity{
+    padding: 2em 3em;
+    margin-top:4em;
+    box-shadow: 0px 9px 20px gray;
+
+}
+
+.identity-1{
+    display: flex;
+    gap:4em;
+}
+
+.NLT3{
+    height:20em;
+    width:20em;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 2px 9px 20px black;
+}
+
+.identity-content{
+   font-size: 2em;
+   font-family:'Roboto',sans-serif;
+   display: flex;
+   align-items: center; 
+}
+
+.logos{
+    margin-top: 2em;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2em 4em;
+    gap:2em;
+}
+
+.NLT5{
+    height:20em;
+    width:20em;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 2px 9px 20px black;
+    
+}
+
+.NLT6,.NLT4{
+    height:20em;
+    width:20em;
+    object-fit: cover;
+     border-radius: 8px;
+    box-shadow: 2px 9px 20px black;
+}
+
+footer{
+        background: #02011f;
+background: radial-gradient(circle, rgba(2, 1, 31, 1) 0%, rgba(19, 50, 102, 1) 35%, rgba(2, 247, 76, 1) 100%);
+height: 4em;
+display: flex;
+align-items:center;
+justify-content:center;
+}
+
+li{
+    list-style: none;
+}
+
+a{
+    color: white;
+    font-family:'Roboto',sans-serif;
+    font-size:2em;
+    font-weight: 300;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    /* Adjust text size */
+    h1 { font-size: 3em; }
+    h2 { font-size: 1.5em; }
+    .heading-content { font-size: 1.2em; }
+    h3 { font-size: 3em; }
+    .identity-content { font-size: 1.5em; }
+    a { font-size: 1.5em; }
+
+    /* Adjust padding for less whitespace */
+    .about-content {
+        padding: 3em 2em;
+    }
+
+    /* Stack image and text in the identity section */
+    .identity-1 {
+        flex-direction: column;
+        gap: 2em;
+        text-align: center;
+    }
+    
+    .NLT6 {
+        height: auto;
+        width: 100%;
+        max-width: 400px;
+    }
+
+    /* Stack logos vertically */
+    .logos {
+        flex-direction: column;
+        padding: 2em 2em;
+    }
+    
+    .NLT5, .NLT3, .NLT4 {
+        width: 100%;
+        max-width: 300px; /* Limits the size of the images */
+        height: auto; /* Maintains aspect ratio */
+    }
+}
+
+/* Mobile Phone (Max Width 480px) */
+@media (max-width: 480px) {
+    /* Further reduce font size for small phones */
+    h1 { font-size: 2.5em; }
+    h3 { font-size: 2.5em; }
+    .identity-content { font-size: 1.2em; }
+
+    /* Reduce content padding */
+    .about-content {
+        padding: 2em 1em;
+    }
+
+    /* Ensure images don't stretch too wide on tiny screens */
+    .NLT6, .NLT5, .NLT4 {
+        max-width: 100%;
+    }
+    
+    /* Center text in the section */
+    .identity-1 {
+        align-items: center;
+    }
+
+    .heading{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
