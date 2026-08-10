@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>FinTeens — Learn to Trade, Level Up Your Money</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#14121F;
+  --surface:#1E1B2E;
+  --surface-2:#272341;
+  --border:#352F52;
+  --gold:#F2B705;
+  --gold-dim:#8a6a1f;
+  --gain:#3DDC97;
+  --loss:#FF6B6B;
+  --blue:#7C9FFF;
+  --text:#F5F3FA;
+  --dim:#A79FC7;
+  --dim-2:#7A7196;
+  --badge-glow:#2e2410;
+  --radius:14px;
+  --display:'Space Grotesk',sans-serif;
+  --body:'Inter',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+:root[data-theme="light"]{
+  --bg:#F5F3FA;
+  --surface:#FFFFFF;
+  --surface-2:#EFEBF9;
+  --border:#DDD6EE;
+  --gold:#A9720A;
+  --gold-dim:#D9C27A;
+  --gain:#12986B;
+  --loss:#D8433F;
+  --blue:#3D5FD9;
+  --text:#211C33;
+  --dim:#5D5578;
+  --dim-2:#847AA0;
+  --badge-glow:#F3E7C9;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--body);
+  min-height:100vh;
+  overflow-x:hidden;
+  transition:background .25s ease, color .25s ease;
+}
+::selection{background:var(--gold);color:#1a1a1a;}
+a{color:inherit;}
+button{font-family:inherit;cursor:pointer;}
+input[type="text"], input[type="range"], select{font-family:inherit;}
+
+/* ---------- Theme toggle ---------- */
+.theme-toggle{
+  position:fixed;bottom:16px;right:16px;z-index:95;
+  background:var(--surface);border:1px solid var(--border);color:var(--text);
+  width:42px;height:42px;border-radius:50%;font-size:17px;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.25);
+}
+
+/* ---------- Hamburger menu (mobile) ---------- */
+.hamburger-btn{
+  display:none;
+  position:fixed;top:12px;left:14px;z-index:100;
+  background:var(--surface);border:1px solid var(--border);color:var(--text);
+  width:40px;height:40px;border-radius:10px;font-size:19px;
+  align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(0,0,0,.25);
+}
+.nav-backdrop{
+  display:none;
+  position:fixed;inset:0;background:rgba(8,6,16,.55);z-index:110;
+}
+.nav-backdrop.show{display:block;}
+
+/* ---------- Info tooltips ---------- */
+.info-ic{
+  width:16px;height:16px;border-radius:50%;background:var(--surface-2);border:1px solid var(--border);
+  color:var(--dim);font-size:10px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;
+  margin-left:6px;vertical-align:middle;position:relative;padding:0;line-height:1;
+}
+.info-ic .tip{
+  display:none;position:absolute;top:130%;left:0;background:var(--surface);border:1px solid var(--border);
+  color:var(--text);font-size:11.5px;font-weight:400;text-transform:none;letter-spacing:normal;
+  padding:10px 12px;border-radius:8px;width:220px;z-index:35;box-shadow:0 10px 28px rgba(0,0,0,.35);line-height:1.45;
+  cursor:default;
+}
+.info-ic.open .tip{display:block;}
+@media (max-width:480px){ .info-ic .tip{left:auto;right:0;width:180px;} }
+
+/* ---------- Layout shell ---------- */
+.app{
+  display:grid;
+  grid-template-columns:220px 1fr;
+  grid-template-rows:auto 1fr;
+  grid-template-areas:
+    "ticker ticker"
+    "nav main";
+  min-height:100vh;
+}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr; grid-template-areas:"ticker" "main";}
+}
+
+/* ---------- Signature: Level-Up Ticker ---------- */
+.ticker-bar{
+  grid-area:ticker;
+  background:linear-gradient(90deg, #1a1730, #241f3d 60%, #1a1730);
+  border-bottom:1px solid var(--border);
+  height:44px;
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+  position:relative;
+}
+.ticker-bar::before{
+  content:"LIVE";
+  position:relative;
+  z-index:2;
+  flex:0 0 auto;
+  font-family:var(--mono);
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:0.12em;
+  color:#0c2018;
+  background:var(--gain);
+  padding:5px 10px;
+  margin-left:12px;
+  border-radius:5px;
+}
+.ticker-track{
+  display:flex;
+  gap:36px;
+  white-space:nowrap;
+  animation:scrollTicker 32s linear infinite;
+  padding-left:24px;
+  font-family:var(--mono);
+  font-size:13px;
+}
+.app.paused .ticker-track{animation-play-state:paused;}
+@keyframes scrollTicker{
+  from{transform:translateX(0);}
+  to{transform:translateX(-50%);}
+}
+.tick{display:flex;align-items:center;gap:6px;color:var(--dim);}
+.tick b{color:var(--text);font-weight:600;}
+.tick .up{color:var(--gain);}
+.tick .down{color:var(--loss);}
+.tick .xp-flash{color:var(--gold);font-weight:700;}
+
+/* ---------- Nav ---------- */
+.nav{
+  grid-area:nav;
+  background:var(--surface);
+  border-right:1px solid var(--border);
+  padding:20px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.brand{
+  font-family:var(--display);
+  font-weight:700;
+  font-size:20px;
+  letter-spacing:-0.02em;
+  padding:4px 10px 18px;
+  display:flex;
+  align-items:baseline;
+  gap:2px;
+}
+.brand span{color:var(--gold);}
+.nav-close-btn{display:none;}
+.navbtn{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  text-align:left;
+  background:transparent;
+  border:none;
+  color:var(--dim);
+  padding:11px 12px;
+  border-radius:10px;
+  font-size:14.5px;
+  font-weight:500;
+  transition:background .15s ease, color .15s ease;
+}
+.navbtn:hover{background:var(--surface-2);color:var(--text);}
+.navbtn.active{background:var(--surface-2);color:var(--gold);}
+.navbtn .ic{font-size:16px;width:20px;text-align:center;}
+.nav-foot{
+  margin-top:auto;
+  padding:12px 10px 4px;
+  border-top:1px solid var(--border);
+}
+.xp-wrap{margin-top:10px;}
+.xp-label{display:flex;justify-content:space-between;font-size:11px;color:var(--dim-2);margin-bottom:5px;font-family:var(--mono);}
+.xp-bar{height:6px;background:var(--surface-2);border-radius:4px;overflow:hidden;}
+.xp-fill{height:100%;background:linear-gradient(90deg,var(--gold),#ffd965);border-radius:4px;transition:width .5s ease;}
+
+@media (max-width:860px){
+  .hamburger-btn{display:flex;}
+  .nav{
+    position:fixed;
+    top:0; left:0; bottom:0;
+    width:260px;
+    max-width:82vw;
+    z-index:120;
+    transform:translateX(-100%);
+    transition:transform .25s ease;
+    box-shadow:10px 0 34px rgba(0,0,0,.45);
+    flex-direction:column;
+    align-items:stretch;
+    overflow-y:auto;
+    padding:20px 14px;
+  }
+  .nav.mobile-open{transform:translateX(0);}
+  .navbtn{flex-direction:row;font-size:14.5px;padding:11px 12px;gap:10px;flex:none;white-space:normal;}
+  .brand{justify-content:space-between;align-items:center;padding-bottom:14px;margin-bottom:6px;border-bottom:1px solid var(--border);}
+  .nav-close-btn{
+    display:flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:8px;background:var(--surface-2);border:1px solid var(--border);
+    color:var(--dim);font-size:14px;
+  }
+}
+
+/* ---------- Main ---------- */
+.main{
+  grid-area:main;
+  padding:26px 30px 60px;
+  max-width:1180px;
+  width:100%;
+  margin:0 auto;
+}
+@media (max-width:600px){.main{padding:18px 14px 40px;}}
+
+.view{display:none;}
+.view.active{display:block; animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;gap:12px;flex-wrap:wrap;}
+.page-head h1{font-family:var(--display);font-size:26px;margin:0 0 4px;letter-spacing:-0.01em;}
+.page-head p{margin:0;color:var(--dim);font-size:13.5px;}
+
+.grid{display:grid;gap:16px;}
+.grid.cols-3{grid-template-columns:repeat(3,1fr);}
+.grid.cols-2{grid-template-columns:repeat(2,1fr);}
+@media (max-width:760px){.grid.cols-3,.grid.cols-2{grid-template-columns:1fr;}}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px 20px;
+}
+.card h3{margin:0 0 14px;font-family:var(--display);font-size:14.5px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:0.04em;}
+
+.stat-label{font-size:12px;color:var(--dim-2);margin-bottom:6px;font-weight:500;}
+.stat-value{font-family:var(--mono);font-size:26px;font-weight:700;letter-spacing:-0.01em;}
+.stat-sub{font-family:var(--mono);font-size:13px;margin-top:6px;}
+.pos{color:var(--gain);}
+.neg{color:var(--loss);}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+th{text-align:left;color:var(--dim-2);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;padding:0 10px 10px;border-bottom:1px solid var(--border);}
+td{padding:11px 10px;border-bottom:1px solid var(--border);font-family:var(--mono);}
+tr:last-child td{border-bottom:none;}
+tr.row-click{cursor:pointer;transition:background .12s ease;}
+tr.row-click:hover{background:var(--surface-2);}
+.sym{font-family:var(--display);font-weight:600;font-size:14px;}
+.sym-name{font-family:var(--body);color:var(--dim-2);font-size:11.5px;display:block;margin-top:2px;}
+
+.search-row{display:flex;gap:10px;margin-bottom:14px;}
+.search-row input{
+  flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  padding:10px 14px;border-radius:9px;font-size:14px;outline:none;
+}
+.search-row input:focus{border-color:var(--gold);}
+
+.btn{
+  border:none;padding:9px 16px;border-radius:8px;font-weight:600;font-size:13px;transition:transform .1s ease, opacity .15s ease;
+}
+.btn:active{transform:scale(0.97);}
+.btn-buy{background:var(--gain);color:#0c2018;}
+.btn-sell{background:var(--loss);color:#2c0d0d;}
+.btn-ghost{background:var(--surface-2);color:var(--text);border:1px solid var(--border);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-gold{background:var(--gold);color:#211a02;}
+
+/* Modal */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(10,8,20,0.72);backdrop-filter:blur(2px);
+  display:none;align-items:center;justify-content:center;z-index:50;padding:16px;
+}
+.modal-bg.show{display:flex;}
+.modal{
+  background:var(--surface);border:1px solid var(--border);border-radius:16px;
+  padding:24px;width:100%;max-width:400px;
+  animation:popIn .2s ease;
+}
+@keyframes popIn{from{opacity:0;transform:scale(.96);}to{opacity:1;transform:scale(1);}}
+.modal h2{font-family:var(--display);margin:0 0 2px;font-size:20px;}
+.modal .sub{color:var(--dim);font-size:13px;margin-bottom:16px;}
+.tab-toggle{display:flex;background:var(--surface-2);border-radius:9px;padding:3px;margin-bottom:16px;}
+.tab-toggle button{flex:1;background:transparent;border:none;color:var(--dim);padding:8px;border-radius:7px;font-weight:600;font-size:13px;}
+.tab-toggle button.active{background:var(--gold);color:#211a02;}
+
+.broker-buttons{display:flex;gap:10px;margin-bottom:16px;}
+.broker-btn{
+  flex:1;padding:14px;border-radius:10px;font-weight:700;font-size:15px;border:2px solid var(--border);
+  background:var(--surface-2);color:var(--dim);transition:all .15s ease;
+}
+.broker-btn.buy.active{background:rgba(61,220,151,0.15);border-color:var(--gain);color:var(--gain);}
+.broker-btn.sell.active{background:rgba(255,107,107,0.15);border-color:var(--loss);color:var(--loss);}
+
+.data-badge{
+  font-family:var(--mono);font-size:9.5px;font-weight:700;letter-spacing:0.05em;padding:2px 7px;border-radius:5px;
+  background:var(--surface-2);color:var(--dim-2);border:1px solid var(--border);
+}
+.data-badge.live{background:rgba(61,220,151,0.15);color:var(--gain);border-color:var(--gain);}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:12px;color:var(--dim-2);margin-bottom:6px;font-weight:500;}
+.field input[type=number]{
+  width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  padding:10px 12px;border-radius:8px;font-family:var(--mono);font-size:15px;outline:none;
+}
+.field input:focus{border-color:var(--gold);}
+.trade-summary{background:var(--surface-2);border-radius:9px;padding:12px 14px;font-family:var(--mono);font-size:13px;margin-bottom:16px;}
+.trade-summary div{display:flex;justify-content:space-between;padding:3px 0;color:var(--dim);}
+.trade-summary div b{color:var(--text);}
+.modal-actions{display:flex;gap:10px;}
+.modal-actions .btn{flex:1;padding:12px;}
+.err{color:var(--loss);font-size:12.5px;margin-top:-8px;margin-bottom:12px;min-height:14px;}
+.close-x{position:absolute;top:16px;right:18px;background:none;border:none;color:var(--dim);font-size:18px;}
+
+/* Tax / Budget */
+.slider-row{margin-bottom:18px;}
+.slider-row .lbl{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:8px;}
+.slider-row .lbl b{font-family:var(--mono);color:var(--gold);font-size:15px;}
+input[type=range]{
+  width:100%;-webkit-appearance:none;height:6px;border-radius:4px;background:var(--surface-2);outline:none;
+}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);cursor:pointer;border:3px solid var(--bg);}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--gold);cursor:pointer;border:3px solid var(--bg);}
+.bracket-bar{height:26px;border-radius:6px;overflow:hidden;display:flex;margin:14px 0 8px;border:1px solid var(--border);}
+.bracket-seg{height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:#0a0a0a;font-weight:700;}
+.legend-note{font-size:11.5px;color:var(--dim-2);font-style:italic;margin-top:10px;}
+
+/* Leaderboard */
+.lb-row{display:flex;align-items:center;gap:14px;padding:12px 10px;border-bottom:1px solid var(--border);}
+.lb-row:last-child{border-bottom:none;}
+.lb-rank{font-family:var(--display);font-weight:700;font-size:15px;width:28px;color:var(--dim-2);}
+.lb-rank.top{color:var(--gold);}
+.lb-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:var(--display);font-size:14px;flex-shrink:0;}
+.lb-info{flex:1;min-width:0;}
+.lb-name{font-weight:600;font-size:14px;}
+.lb-name .you-tag{background:var(--gold);color:#211a02;font-size:9.5px;padding:1px 6px;border-radius:5px;margin-left:6px;font-weight:700;vertical-align:middle;}
+.lb-growth{font-family:var(--mono);font-weight:700;font-size:14.5px;}
+
+/* Badges */
+.badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;}
+.badge{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;
+  opacity:0.4;filter:grayscale(1);transition:all .25s ease;
+}
+.badge.earned{opacity:1;filter:none;border-color:var(--gold-dim);background:linear-gradient(160deg,var(--surface-2),var(--badge-glow));}
+.badge .ic{font-size:30px;margin-bottom:8px;}
+.badge .nm{font-weight:600;font-size:12.5px;margin-bottom:3px;}
+.badge .ds{font-size:10.5px;color:var(--dim-2);line-height:1.3;}
+
+/* Quiz */
+.quiz-card{cursor:pointer;transition:transform .15s ease, border-color .15s ease;}
+.quiz-card:hover{transform:translateY(-2px);border-color:var(--gold-dim);}
+.quiz-topic{font-family:var(--display);font-size:16px;font-weight:600;margin-bottom:4px;}
+.quiz-meta{font-size:12px;color:var(--dim-2);}
+.q-option{
+  display:block;width:100%;text-align:left;background:var(--surface-2);border:1px solid var(--border);
+  color:var(--text);padding:12px 14px;border-radius:9px;margin-bottom:9px;font-size:14px;transition:all .15s ease;
+}
+.q-option:hover{border-color:var(--gold-dim);}
+.q-option.correct{background:rgba(61,220,151,0.18);border-color:var(--gain);}
+.q-option.wrong{background:rgba(255,107,107,0.18);border-color:var(--loss);}
+.q-option.selected{background:var(--surface-2);border-color:var(--gold);}
+.qprog{display:flex;gap:5px;margin-bottom:16px;}
+.qprog span{flex:1;height:4px;border-radius:3px;background:var(--surface-2);}
+.qprog span.done{background:var(--gold);}
+
+/* Toast */
+.toast-wrap{position:fixed;bottom:70px;right:20px;z-index:80;display:flex;flex-direction:column;gap:10px;}
+@media (max-width:600px){.toast-wrap{right:10px;left:10px;bottom:70px;}}
+.toast{
+  background:var(--surface-2);border:1px solid var(--gold-dim);border-left:4px solid var(--gold);
+  padding:12px 16px;border-radius:10px;font-size:13.5px;box-shadow:0 8px 24px rgba(0,0,0,.4);
+  animation:toastIn .25s ease; max-width:320px;
+}
+@keyframes toastIn{from{opacity:0;transform:translateX(20px);}to{opacity:1;transform:translateX(0);}}
+.empty-note{color:var(--dim-2);font-size:13px;text-align:center;padding:30px 10px;}
+
+canvas{max-width:100%;}
+.chart-box{position:relative;height:220px;}
+.two-col{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;}
+@media (max-width:860px){.two-col{grid-template-columns:1fr;}}
+
+/* ---------- Auth screens ---------- */
+.auth-screen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:radial-gradient(circle at 20% 15%, #241f3d 0%, var(--bg) 55%);
+}
+.auth-card{
+  width:100%;max-width:400px;background:var(--surface);border:1px solid var(--border);
+  border-radius:18px;padding:32px 28px;box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+.auth-brand{font-family:var(--display);font-weight:700;font-size:24px;margin-bottom:4px;}
+.auth-brand span{color:var(--gold);}
+.auth-sub{color:var(--dim);font-size:13.5px;margin-bottom:24px;}
+.auth-tabs{display:flex;gap:4px;background:var(--surface-2);padding:3px;border-radius:9px;margin-bottom:22px;}
+.auth-tabs button{flex:1;background:transparent;border:none;color:var(--dim);padding:9px;border-radius:7px;font-weight:600;font-size:13px;}
+.auth-tabs button.active{background:var(--gold);color:#211a02;}
+.auth-form{display:none;}
+.auth-form.active{display:block;animation:fadeUp .3s ease;}
+.field-hint{font-size:11px;color:var(--dim-2);margin-top:5px;}
+.auth-form .field input[type=text],.auth-form .field input[type=email],.auth-form .field input[type=password]{
+  width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  padding:11px 13px;border-radius:8px;font-size:14px;outline:none;
+}
+.auth-form .field input:focus{border-color:var(--gold);}
+.auth-err{color:var(--loss);font-size:12.5px;min-height:16px;margin-bottom:10px;}
+.auth-note{
+  background:var(--surface-2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;
+  font-size:11.5px;color:var(--dim-2);line-height:1.5;margin-top:18px;
+}
+.age-check{display:flex;align-items:flex-start;gap:9px;margin-bottom:16px;}
+.age-check input{margin-top:3px;width:16px;height:16px;flex-shrink:0;}
+.age-check label{font-size:12.5px;color:var(--dim);line-height:1.4;}
+
+/* ---------- Profile ---------- */
+.profile-head{display:flex;align-items:center;gap:18px;margin-bottom:22px;flex-wrap:wrap;}
+.profile-avatar{
+  width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#ffd965);
+  color:#211a02;display:flex;align-items:center;justify-content:center;font-family:var(--display);
+  font-weight:700;font-size:24px;flex-shrink:0;
+}
+.profile-name{font-family:var(--display);font-size:20px;font-weight:600;}
+.profile-email{color:var(--dim);font-size:13px;font-family:var(--mono);}
+.profile-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+@media (max-width:700px){.profile-stats{grid-template-columns:repeat(2,1fr);}}
+.profile-stat{background:var(--surface-2);border-radius:10px;padding:14px;text-align:center;}
+.profile-stat .n{font-family:var(--mono);font-weight:700;font-size:19px;color:var(--gold);}
+.profile-stat .l{font-size:11px;color:var(--dim-2);margin-top:4px;}
+
+/* ---------- Education page ---------- */
+.edu-hero{
+  background:linear-gradient(135deg,var(--surface-2),var(--surface));border:1px solid var(--border);
+  border-radius:16px;padding:26px 24px;margin-bottom:18px;
+}
+.edu-hero h2{font-family:var(--display);font-size:21px;margin:0 0 8px;}
+.edu-hero p{color:var(--dim);font-size:14px;line-height:1.6;margin:0;max-width:620px;}
+.edu-section{margin-bottom:16px;}
+.edu-section h3{font-family:var(--display);font-size:15px;margin:0 0 12px;color:var(--text);text-transform:none;letter-spacing:0;}
+.edu-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media (max-width:760px){.edu-cards{grid-template-columns:1fr;}}
+.edu-card{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.edu-card .tt{font-weight:600;font-size:14px;margin-bottom:6px;}
+.edu-card .dd{font-size:12.5px;color:var(--dim);line-height:1.55;}
+.glossary{display:grid;grid-template-columns:repeat(2,1fr);gap:0;}
+@media (max-width:700px){.glossary{grid-template-columns:1fr;}}
+.gloss-item{padding:12px 4px;border-bottom:1px solid var(--border);}
+.gloss-item .term{font-family:var(--mono);font-weight:700;color:var(--gold);font-size:13px;}
+.gloss-item .def{font-size:13px;color:var(--dim);margin-top:3px;line-height:1.5;}
+.accordion-item{border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden;}
+.accordion-head{
+  width:100%;text-align:left;background:var(--surface-2);border:none;color:var(--text);
+  padding:14px 16px;font-weight:600;font-size:14px;display:flex;justify-content:space-between;align-items:center;
+}
+.accordion-head .arrow{transition:transform .2s ease;color:var(--dim-2);}
+.accordion-item.open .accordion-head .arrow{transform:rotate(180deg);}
+.accordion-body{max-height:0;overflow:hidden;transition:max-height .3s ease;background:var(--surface);}
+.accordion-item.open .accordion-body{max-height:600px;}
+.accordion-body-inner{padding:6px 16px 16px;font-size:13.5px;color:var(--dim);line-height:1.65;}
+.edu-cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;}
+
+/* ---------- Market filters & currency badge ---------- */
+.market-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.market-tabs button{
+  background:var(--surface-2);border:1px solid var(--border);color:var(--dim);
+  padding:8px 14px;border-radius:20px;font-size:13px;font-weight:600;
+}
+.market-tabs button.active{background:var(--gold);color:#211a02;border-color:var(--gold);}
+.flag-badge{font-size:11px;margin-left:5px;opacity:.85;}
+.ngn-note{display:block;font-family:var(--body);color:var(--dim-2);font-size:10.5px;margin-top:2px;}
+</style>
+</head>
+<body>
+
+<button class="theme-toggle" id="themeToggle" title="Toggle dark / light mode">🌙</button>
+
+<!-- AUTH SCREEN -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="auth-brand">Fin<span>Teens</span></div>
+    <div class="auth-sub">Practice investing with fake money. Real skills, zero risk.</div>
+    <div class="auth-tabs">
+      <button class="active" id="tabSignup">Sign Up</button>
+      <button id="tabLogin">Log In</button>
+    </div>
+
+    <!-- Sign up form -->
+    <div class="auth-form active" id="formSignup">
+      <div class="field"><label>Username</label><input type="text" id="suUsername" placeholder="e.g. moneymaker2026"></div>
+      <div class="field"><label>Email</label><input type="email" id="suEmail" placeholder="you@example.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="suPassword" placeholder="At least 8 characters"><div class="field-hint">Never share your password with anyone, including friends.</div></div>
+      <div class="field"><label>Confirm Password</label><input type="password" id="suPassword2" placeholder="Re-enter password"></div>
+      <div class="age-check">
+        <input type="checkbox" id="suParentCheck">
+        <label for="suParentCheck">I have a parent or guardian's permission to use this app, and I understand this is a simulation with no real money.</label>
+      </div>
+      <div class="auth-err" id="suErr"></div>
+      <button class="btn btn-gold" id="suSubmit" style="width:100%;padding:12px;">Create Account</button>
+      <div class="auth-note">Passwords are hashed before they're ever stored, and your data is private to you — no one else using this app can see it. This is a learning demo, not a production system: please use a username or nickname rather than real personal details where possible.</div>
+    </div>
+
+    <!-- Log in form -->
+    <div class="auth-form" id="formLogin">
+      <div class="field"><label>Email</label><input type="email" id="liEmail" placeholder="you@example.com"></div>
+      <div class="field"><label>Password</label><input type="password" id="liPassword" placeholder="Your password"></div>
+      <div class="auth-err" id="liErr"></div>
+      <button class="btn btn-gold" id="liSubmit" style="width:100%;padding:12px;">Log In</button>
+    </div>
+  </div>
+</div>
+
+<div class="app" id="app" style="display:none;">
+
+  <!-- Mobile menu trigger + backdrop -->
+  <button class="hamburger-btn" id="hamburgerBtn" aria-label="Open menu">☰</button>
+  <div class="nav-backdrop" id="navBackdrop"></div>
+
+  <!-- Signature ticker -->
+  <div class="ticker-bar">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+
+  <!-- Nav -->
+  <nav class="nav" id="mainNav">
+    <div class="brand">
+      Fin<span>Teens</span>
+      <button class="nav-close-btn" id="navCloseBtn" aria-label="Close menu">✕</button>
+    </div>
+    <button class="navbtn active" data-view="education"><span class="ic">🎓</span>Education</button>
+    <button class="navbtn" data-view="dashboard"><span class="ic">◆</span>Dashboard</button>
+    <button class="navbtn" data-view="trade"><span class="ic">⇄</span>Trade</button>
+    <button class="navbtn" data-view="tax"><span class="ic">%</span>Tax Sim</button>
+    <button class="navbtn" data-view="budget"><span class="ic">▤</span>Budget</button>
+    <button class="navbtn" data-view="leaderboard"><span class="ic">▲</span>Leaderboard</button>
+    <button class="navbtn" data-view="learn"><span class="ic">✦</span>Badges &amp; Quizzes</button>
+    <button class="navbtn" data-view="profile"><span class="ic">●</span>Profile</button>
+    <div class="nav-foot">
+      <div style="font-size:13px;font-weight:600;" id="navUserLine">Level 1 Trader</div>
+      <div class="xp-wrap">
+        <div class="xp-label"><span id="xpNowLbl">0 XP</span><span id="xpNextLbl">/ 100</span></div>
+        <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+      </div>
+      <button class="btn btn-ghost" id="logoutBtn" style="width:100%;margin-top:12px;">Log Out</button>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <!-- EDUCATION -->
+    <section class="view active" id="view-education">
+      <div class="page-head">
+        <div><h1>Investing 101</h1><p>Start here before you trade — everything below is theory, no fake money involved yet.</p></div>
+      </div>
+
+      <div class="edu-hero">
+        <h2>What does it actually mean to "invest"?</h2>
+        <p>Investing means putting money into something today with the goal of it growing in value over time — instead of spending it now, or letting it sit still where inflation slowly eats its value. When you buy a stock, you're buying a small slice of ownership in a real company. If the company does well, your slice tends to become more valuable. If it does poorly, your slice can lose value too. That trade-off between potential reward and potential loss is called <b>risk</b>, and understanding it is the whole game.</p>
+      </div>
+
+      <div class="edu-section">
+        <h3>The building blocks</h3>
+        <div class="edu-cards">
+          <div class="edu-card">
+            <div class="tt">📈 Stocks</div>
+            <div class="dd">A share of ownership in a company. Prices move up and down based on how investors feel about the company's future — its profits, its products, its leadership, even the wider economy.</div>
+          </div>
+          <div class="edu-card">
+            <div class="tt">🧺 ETFs</div>
+            <div class="dd">An Exchange-Traded Fund bundles many stocks into one basket you can buy in a single trade. Buying an ETF like SPY spreads your risk across hundreds of companies instead of betting on just one.</div>
+          </div>
+          <div class="edu-card">
+            <div class="tt">🏦 Bonds</div>
+            <div class="dd">A loan you give to a company or government, which pays you back with interest. Bonds are usually lower-risk and lower-reward than stocks — steadier, but slower growth.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="edu-section">
+        <h3>Core concepts, one accordion at a time</h3>
+        <div id="eduAccordion">
+          <div class="accordion-item">
+            <button class="accordion-head">Risk, return, and why they're linked <span class="arrow">⌄</span></button>
+            <div class="accordion-body"><div class="accordion-body-inner">Generally, investments that can grow your money faster (higher potential return) can also lose it faster (higher risk). A savings account is low-risk and low-return. A single small company's stock is high-risk and potentially high-return. There's no investment that's both perfectly safe and guaranteed to grow fast — anyone who claims otherwise is usually running a scam.</div></div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-head">Diversification: don't put all your eggs in one basket <span class="arrow">⌄</span></button>
+            <div class="accordion-body"><div class="accordion-body-inner">Diversification means spreading your money across different companies, industries, and even countries, so that one bad outcome doesn't wipe out your whole portfolio. It's why the Leaderboard in this app ranks by percentage growth instead of raw dollars — steady, diversified growth is a more valuable skill than one lucky big bet.</div></div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-head">Compound interest: the "snowball effect" <span class="arrow">⌄</span></button>
+            <div class="accordion-body"><div class="accordion-body-inner">When your investment earns a return, and then that return itself starts earning a return, growth speeds up over time — like a snowball rolling downhill. The earlier you start, the more time compounding has to work, which is why even small amounts invested as a teenager can matter a lot by the time you're an adult.</div></div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-head">Reading a stock quote <span class="arrow">⌄</span></button>
+            <div class="accordion-body"><div class="accordion-body-inner">A stock quote usually shows: the <b>ticker symbol</b> (a short code like AAPL), the current <b>price</b> per share, and the <b>daily change</b> (how much it moved today, in dollars and percent). On the Trade page, green means the price is up today and red means it's down.</div></div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-head">Bull markets vs. bear markets <span class="arrow">⌄</span></button>
+            <div class="accordion-body"><div class="accordion-body-inner">A "bull market" is a period where prices are generally rising and investors feel confident. A "bear market" is a period of falling prices and pessimism. Markets move through both cycles over time — reacting to short-term dips by panic-selling is one of the most common investing mistakes.</div></div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-head">Taxes on investing, briefly <span class="arrow">⌄</span></button>
+            <div class="accordion-body"><div class="accordion-body-inner">When you sell an investment for more than you paid, the profit is called a <b>capital gain</b>, and many countries tax it. Visit the Tax Sim tab to play with a simplified, simulated version of how income and capital gains taxes work.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="edu-section">
+        <h3>Glossary</h3>
+        <div class="card">
+          <div class="glossary">
+            <div class="gloss-item"><div class="term">Ticker Symbol</div><div class="def">The short letter code used to identify a stock, e.g. AAPL for Apple.</div></div>
+            <div class="gloss-item"><div class="term">Market Cap</div><div class="def">The total value of all a company's shares combined (share price × number of shares).</div></div>
+            <div class="gloss-item"><div class="term">P/E Ratio</div><div class="def">Price-to-Earnings ratio — how much investors pay for each dollar a company earns.</div></div>
+            <div class="gloss-item"><div class="term">Dividend</div><div class="def">A portion of company profit paid directly to shareholders, usually on a regular schedule.</div></div>
+            <div class="gloss-item"><div class="term">Volatility</div><div class="def">How much and how quickly a price swings up and down. High volatility = bigger, faster moves.</div></div>
+            <div class="gloss-item"><div class="term">Portfolio</div><div class="def">The full collection of everything you own — all your stocks, ETFs, bonds, and cash together.</div></div>
+            <div class="gloss-item"><div class="term">Exchange</div><div class="def">The marketplace where stocks are bought and sold, e.g. the NYSE in the US or the NGX in Nigeria.</div></div>
+            <div class="gloss-item"><div class="term">Bull / Bear Market</div><div class="def">A "bull" market is rising and optimistic; a "bear" market is falling and pessimistic.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="edu-section">
+        <h3>Going global</h3>
+        <div class="card">
+          <p style="font-size:13.5px;color:var(--dim);line-height:1.6;margin:0 0 12px;">Investing isn't limited to one country. The Trade tab now includes both the US market and Nigeria's stock exchange, the <b>NGX</b> — home to companies like Dangote Cement, MTN Nigeria, and Zenith Bank. NGX stocks show their live price in Naira (₦) first, with an approximate US-dollar equivalent underneath — since your wallet balance is tracked in USD, that's the amount actually deducted when you trade.</p>
+          <div class="edu-cta">
+            <button class="btn btn-gold" data-goto="trade">Go to Trade →</button>
+            <button class="btn btn-ghost" data-goto="learn">Try a Quiz →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-dashboard">
+      <div class="page-head">
+        <div><h1>Your Portfolio</h1><p>Simulated funds only — nothing here is real money.</p></div>
+      </div>
+      <div class="grid cols-3" style="margin-bottom:16px;">
+        <div class="card"><div class="stat-label">Available Cash <button class="info-ic">i<span class="tip">The simulated money you haven't invested yet. It goes down when you buy stock and up when you sell.</span></button></div><div class="stat-value" id="dCash">$0.00</div></div>
+        <div class="card"><div class="stat-label">Total Portfolio Value <button class="info-ic">i<span class="tip">Your available cash plus the current market value of every stock you own — your full net worth in this simulation.</span></button></div><div class="stat-value" id="dTotal">$0.00</div></div>
+        <div class="card"><div class="stat-label">Net Profit / Loss <button class="info-ic">i<span class="tip">How your total portfolio value compares to the $10,000 you started with. Green means you're up, red means you're down.</span></button></div><div class="stat-value" id="dPL">$0.00</div><div class="stat-sub" id="dPLPct">0.00%</div></div>
+      </div>
+      <div class="two-col" style="margin-bottom:16px;">
+        <div class="card">
+          <h3>Portfolio Value Over Time <button class="info-ic">i<span class="tip">Tracks your total portfolio value (cash + holdings) at regular intervals, so you can see growth or decline over time.</span></button></h3>
+          <div class="chart-box"><canvas id="valueChart"></canvas></div>
+        </div>
+        <div class="card">
+          <h3>Allocation <button class="info-ic">i<span class="tip">Shows how your money is spread across cash and each stock you own. More slices usually means more diversification.</span></button></h3>
+          <div class="chart-box"><canvas id="allocChart"></canvas></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Holdings <button class="info-ic">i<span class="tip">Every stock you currently own, your average cost per share, its live price, and how much you've gained or lost.</span></button></h3>
+        <div id="holdingsTableWrap"><table><thead><tr><th>Symbol</th><th>Shares</th><th>Avg Cost</th><th>Price</th><th>Market Value</th><th>Gain / Loss</th></tr></thead><tbody id="holdingsBody"></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- TRADE -->
+    <section class="view" id="view-trade">
+      <div class="page-head">
+        <div><h1>Market Watchlist</h1><p>Prices simulate live movement every few seconds. <button class="info-ic">i<span class="tip">Green/red % shows how much a stock has moved today. Tap any row to open the buy/sell screen for that stock.</span></button></p></div>
+      </div>
+      <div class="market-tabs" id="marketTabs">
+        <button class="active" data-market="all">All Markets</button>
+        <button data-market="US">🇺🇸 US Market</button>
+        <button data-market="NGX">🇳🇬 Nigeria (NGX)</button>
+      </div>
+      <div class="search-row"><input type="text" id="stockSearch" placeholder="Search symbol or company…"></div>
+      <div class="card">
+        <table><thead><tr><th>Stock</th><th>Price</th><th>Today</th><th></th></tr></thead><tbody id="watchlistBody"></tbody></table>
+      </div>
+    </section>
+
+    <!-- TAX SIM -->
+    <section class="view" id="view-tax">
+      <div class="page-head">
+        <div><h1>Adulting Simulator: Taxes</h1><p>Drag the slider to see how simulated tax brackets work.</p></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h3>Understanding Taxes as an Investor</h3>
+        <p style="font-size:13.5px;color:var(--dim);line-height:1.65;margin:0 0 14px;">Taxes fund shared things like roads, schools, and hospitals — they're not something to "beat." But investors do use completely <b>legal</b> strategies to lower how much they owe. Expand each topic below to learn how, then try the simulator underneath.</p>
+        <div>
+          <div class="accordion-item">
+            <button class="accordion-head">Why we pay tax in the first place <span class="arrow">⌄</span></button>
+            <div class="accordion-body"><div class="accordion-body-inner">Governments collect tax to pay for things everyone benefits from — roads, public schools, hospitals, emergency services, and social programs. When people talk about investors "saving on taxes," they don't mean avoiding their fair share — they mean legally structuring how and when they buy, hold, and sell investments so they're not paying more than the law actually requires.</div></div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-head">Income tax brackets: how the slider below works <span class="arrow">⌄</span></button>
+            <div class="accordion-body"><div class="accordion-body-inner">Most countries use a progressive tax system: income is split into chunks called brackets, and each chunk is taxed at its own rate — not your whole income at the highest rate you reach. Earning more never makes your take-home pay go down; it just means the extra income above each threshold is taxed a bit more. Drag the income slider below to watch this in action.</div></div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-head">Capital gains tax: short-term vs. long-term <span class="arrow">⌄</span></button>
+            <div class="accordion-body"><div class="accordion-body-inner">When you sell an investment for more than you paid, that profit is a <b>capital gain</b> — and it's usually taxed. In many countries (including the US), how long you held it matters a lot: sell within a year and the profit is often taxed like regular income ("short-term"); hold over a year and it often qualifies for a lower long-term capital gains rate. This is one of the biggest reasons patient, long-term investors often keep more of their profits than frequent traders.</div></div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-head">Legal ways investors lower their tax bill <span class="arrow">⌄</span></button>
+            <div class="accordion-body"><div class="accordion-body-inner">None of these are loopholes — they're built into tax law on purpose, usually to encourage saving and long-term investing:
+              <ul style="margin:8px 0 0;padding-left:18px;">
+                <li style="margin-bottom:6px;">Holding investments over a year to qualify for lower long-term capital gains rates</li>
+                <li style="margin-bottom:6px;">Using tax-advantaged retirement accounts (like a 401(k) or IRA in the US) where money can grow without being taxed every year</li>
+                <li style="margin-bottom:6px;"><b>Tax-loss harvesting</b>: selling an investment that's down to offset the tax owed on one that's up</li>
+                <li style="margin-bottom:6px;">Spreading investments across account types so gains land wherever they're taxed most favorably</li>
+                <li>Some governments offer tax-exempt investments — like certain municipal bonds in the US — where the interest earned isn't taxed at all</li>
+              </ul>
+              <div style="margin-top:10px;font-style:italic;color:var(--dim-2);">Rules like these vary hugely by country — this is a simplified overview, not personal tax advice.</div>
+            </div></div>
+          </div>
+          <div class="accordion-item">
+            <button class="accordion-head">Legal tax avoidance vs. illegal tax evasion <span class="arrow">⌄</span></button>
+            <div class="accordion-body"><div class="accordion-body-inner"><b>Tax avoidance</b> means legally arranging your finances to pay only what you actually owe — using retirement accounts, timing sales, and similar strategies exactly as tax law intends. <b>Tax evasion</b> means illegally hiding income or lying to avoid tax you genuinely owe, and it carries serious legal penalties. Every strategy above falls under the first, legal category.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="slider-row">
+            <div class="lbl">Simulated Annual Income <button class="info-ic">i<span class="tip">Gross income is what you earn before any tax is taken out. Drag to see how tax changes at different income levels.</span></button> <b id="incomeLbl">$40,000</b></div>
+            <input type="range" id="incomeSlider" min="0" max="150000" step="1000" value="40000">
+          </div>
+          <div class="bracket-bar" id="bracketBar"></div>
+          <div class="legend-note">Educational simplified brackets — not real tax law or advice.</div>
+          <div style="margin-top:18px;display:flex;align-items:center;gap:10px;">
+            <input type="checkbox" id="capGainsToggle" style="width:16px;height:16px;">
+            <label for="capGainsToggle" style="font-size:13px;color:var(--dim);">Include simulated capital gains from my portfolio profit</label>
+            <button class="info-ic">i<span class="tip">A capital gain is the profit you make when you sell an investment for more than you paid. This adds your current portfolio profit as taxable income.</span></button>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Gross vs Net <button class="info-ic">i<span class="tip">Net income is what's left after tax — the amount you'd actually get to keep and spend or save.</span></button></h3>
+          <div class="chart-box"><canvas id="taxChart"></canvas></div>
+          <div style="margin-top:14px;font-family:var(--mono);font-size:13.5px;">
+            <div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:var(--dim);">Gross income</span><b id="grossOut">$0</b></div>
+            <div style="display:flex;justify-content:space-between;padding:4px 0;"><span style="color:var(--dim);">Estimated tax</span><b class="neg" id="taxOut">$0</b></div>
+            <div style="display:flex;justify-content:space-between;padding:4px 0;border-top:1px solid var(--border);margin-top:4px;"><span style="color:var(--dim);">Net income</span><b class="pos" id="netOut">$0</b></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BUDGET -->
+    <section class="view" id="view-budget">
+      <div class="page-head">
+        <div><h1>Budget &amp; Cash Flow</h1><p>Balance simulated monthly earnings against expenses and savings.</p></div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="slider-row"><div class="lbl">Monthly Earnings <button class="info-ic">i<span class="tip">The simulated take-home money you have coming in each month, like an allowance or part-time job pay.</span></button> <b id="earnLbl">$1,200</b></div><input type="range" id="earnSlider" min="0" max="4000" step="50" value="1200"></div>
+          <div class="slider-row"><div class="lbl">Essentials (food, transport, phone) <b id="essLbl">$300</b></div><input type="range" id="essSlider" min="0" max="2000" step="25" value="300"></div>
+          <div class="slider-row"><div class="lbl">Fun &amp; Extras <b id="funLbl">$150</b></div><input type="range" id="funSlider" min="0" max="2000" step="25" value="150"></div>
+          <div class="stat-sub" id="savingsOut" style="font-size:16px;margin-top:10px;">Savings this month: <b class="pos">$750</b></div>
+        </div>
+        <div class="card">
+          <h3>Where It Goes <button class="info-ic">i<span class="tip">A healthy budget usually saves something every month, even a small amount — that's the money that can later be invested.</span></button></h3>
+          <div class="chart-box"><canvas id="budgetChart"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEADERBOARD -->
+    <section class="view" id="view-leaderboard">
+      <div class="page-head">
+        <div><h1>Leaderboard</h1><p>Ranked by portfolio growth %, not dollar amount — smart risk beats big bets. <button class="info-ic">i<span class="tip">Ranking by percentage growth (not total dollars) means someone who started small can still rank #1 by investing wisely.</span></button></p></div>
+      </div>
+      <div class="card" id="leaderboardWrap"></div>
+    </section>
+
+    <!-- LEARN (badges + quizzes) -->
+    <section class="view" id="view-learn">
+      <div class="page-head">
+        <div><h1>Badges &amp; Quizzes</h1><p>Earn XP and unlock badges as you learn.</p></div>
+      </div>
+      <div class="card" style="margin-bottom:16px;">
+        <h3>Your Badges <button class="info-ic">i<span class="tip">Badges unlock automatically as you hit milestones — like making your first trade or diversifying your portfolio.</span></button></h3>
+        <div class="badge-grid" id="badgeGrid"></div>
+      </div>
+      <div class="card">
+        <h3>Quick Quizzes <button class="info-ic">i<span class="tip">Short 3-question quizzes on key concepts. Each correct answer earns 10 XP toward your next level.</span></button></h3>
+        <div class="grid cols-3" id="quizGrid"></div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="view" id="view-profile">
+      <div class="page-head">
+        <div><h1>Your Profile</h1><p>Account details and progress.</p></div>
+      </div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="profile-head">
+          <div class="profile-avatar" id="profAvatar">Y</div>
+          <div>
+            <div class="profile-name" id="profName">Username</div>
+            <div class="profile-email" id="profEmail">you@example.com</div>
+          </div>
+        </div>
+        <div class="profile-stats">
+          <div class="profile-stat"><div class="n" id="profLevel">1</div><div class="l">Level</div></div>
+          <div class="profile-stat"><div class="n" id="profXp">0</div><div class="l">Total XP</div></div>
+          <div class="profile-stat"><div class="n" id="profTrades">0</div><div class="l">Trades Made</div></div>
+          <div class="profile-stat"><div class="n" id="profBadges">0</div><div class="l">Badges Earned</div></div>
+        </div>
+        <div class="stat-sub" style="color:var(--dim-2);font-size:12px;">Member since <span id="profJoined">—</span></div>
+      </div>
+      <div class="card">
+        <h3>Change Password</h3>
+        <div class="field"><label>Current Password</label><input type="password" id="pwCurrent" style="width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;outline:none;"></div>
+        <div class="field"><label>New Password</label><input type="password" id="pwNew" style="width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;font-size:14px;outline:none;"></div>
+        <div class="auth-err" id="pwErr"></div>
+        <button class="btn btn-gold" id="pwSubmit">Update Password</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Trade Modal -->
+<div class="modal-bg" id="tradeModalBg">
+  <div class="modal" style="position:relative;max-width:420px;">
+    <button class="close-x" id="tradeClose">✕</button>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <h2 id="tradeSym" style="margin:0;">AAPL</h2>
+      <span id="tradeDataBadge" class="data-badge">SIMULATED</span>
+    </div>
+    <div class="sub" id="tradePriceLine">$0.00 per share</div>
+    <div class="chart-box" style="height:150px;margin:14px 0;">
+      <canvas id="tradeChart"></canvas>
+    </div>
+    <div class="broker-buttons">
+      <button class="broker-btn buy" data-mode="buy" id="buyTabBtn">▲ Buy</button>
+      <button class="broker-btn sell" data-mode="sell" id="sellTabBtn">▼ Sell</button>
+    </div>
+    <div class="field">
+      <label id="qtyLabel">Shares to buy</label>
+      <input type="number" id="qtyInput" min="1" value="1">
+    </div>
+    <div class="trade-summary">
+      <div><span>Available cash</span><b id="sumCash">$0</b></div>
+      <div><span>Est. cost</span><b id="sumCost">$0</b></div>
+      <div><span>Shares owned</span><b id="sumOwned">0</b></div>
+    </div>
+    <div class="err" id="tradeErr"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="tradeCancel">Cancel</button>
+      <button class="btn btn-buy" id="tradeConfirm">Confirm Buy</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quiz Modal -->
+<div class="modal-bg" id="quizModalBg">
+  <div class="modal" style="max-width:460px;position:relative;">
+    <button class="close-x" id="quizClose">✕</button>
+    <h2 id="quizTitle">Compound Interest</h2>
+    <div class="qprog" id="quizProg"></div>
+    <div id="quizBody"></div>
+  </div>
+</div>
+
+<!-- Welcome Tour Modal -->
+<div class="modal-bg" id="tourModalBg">
+  <div class="modal" style="max-width:460px;position:relative;">
+    <button class="close-x" id="tourClose">✕</button>
+    <div class="qprog" id="tourProg"></div>
+    <div style="text-align:center;font-size:38px;margin-bottom:6px;" id="tourIcon">👋</div>
+    <h2 style="text-align:center;" id="tourTitle">Welcome to FinTeens!</h2>
+    <div style="font-size:13.5px;color:var(--dim);line-height:1.65;text-align:center;margin:10px 0 20px;" id="tourBody"></div>
+    <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:16px;">
+      <input type="checkbox" id="tourHideCheck" style="margin-top:3px;width:15px;height:15px;flex-shrink:0;">
+      <label for="tourHideCheck" style="font-size:12px;color:var(--dim-2);line-height:1.4;">Don't show this tour again when I log in</label>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="tourBackBtn">Back</button>
+      <button class="btn btn-gold" id="tourNextBtn" style="flex:2;">Next</button>
+    </div>
+    <button id="tourSkipBtn" style="width:100%;background:none;border:none;color:var(--dim-2);font-size:12px;padding:12px 0 0;text-decoration:underline;">Skip tour</button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ================= STORAGE POLYFILL =================
+   `window.storage` (get/set/delete/list) is provided automatically when
+   this file runs inside a Claude.ai artifact. Outside that environment —
+   e.g. opened directly in a browser, or served via VS Code's Live Server —
+   that API doesn't exist, so every account/portfolio save would silently
+   fail. This fills the same interface using the browser's own
+   localStorage, so the app works identically either way. Note: this local
+   fallback keeps data only in *this* browser, on *this* device — it won't
+   sync between devices the way the Claude-hosted storage does.
+================================================= */
+if(!window.storage){
+  const LS_PREFIX = "finteens::";
+  window.storage = {
+    async get(key, shared){
+      const raw = localStorage.getItem(LS_PREFIX + key);
+      if(raw === null) throw new Error("key not found: " + key);
+      return { key, value: raw, shared: !!shared };
+    },
+    async set(key, value, shared){
+      localStorage.setItem(LS_PREFIX + key, value);
+      return { key, value, shared: !!shared };
+    },
+    async delete(key, shared){
+      localStorage.removeItem(LS_PREFIX + key);
+      return { key, deleted: true, shared: !!shared };
+    },
+    async list(prefix, shared){
+      const p = LS_PREFIX + (prefix || "");
+      const keys = Object.keys(localStorage).filter(k=>k.startsWith(p)).map(k=>k.slice(LS_PREFIX.length));
+      return { keys, prefix, shared: !!shared };
+    }
+  };
+}
+
+/* ================= DATA =================
+   This version runs entirely standalone — no backend server required.
+   Everything (stocks, badges, quizzes, rival leaderboard) lives here in
+   the browser, same as the very first version of this app. */
+const NGN_PER_USD = 1550; // approximate, simulated exchange rate for illustration only
+
+const STOCK_SEED = [
+  {sym:"AAPL", name:"Apple Inc.", price:212.40, market:"US"},
+  {sym:"MSFT", name:"Microsoft Corp.", price:441.10, market:"US"},
+  {sym:"GOOGL", name:"Alphabet Inc.", price:178.65, market:"US"},
+  {sym:"AMZN", name:"Amazon.com Inc.", price:198.30, market:"US"},
+  {sym:"TSLA", name:"Tesla Inc.", price:256.80, market:"US"},
+  {sym:"NVDA", name:"NVIDIA Corp.", price:132.55, market:"US"},
+  {sym:"DIS", name:"Walt Disney Co.", price:112.20, market:"US"},
+  {sym:"NKE", name:"Nike Inc.", price:78.90, market:"US"},
+  {sym:"SBUX", name:"Starbucks Corp.", price:88.40, market:"US"},
+  {sym:"SPY", name:"S&P 500 ETF", price:562.10, market:"US"},
+  {sym:"DANGCEM", name:"Dangote Cement Plc", nativeNGN:465.00, price:465.00/NGN_PER_USD, market:"NGX"},
+  {sym:"MTNN", name:"MTN Nigeria", nativeNGN:225.00, price:225.00/NGN_PER_USD, market:"NGX"},
+  {sym:"ZENITHBANK", name:"Zenith Bank Plc", nativeNGN:40.50, price:40.50/NGN_PER_USD, market:"NGX"},
+  {sym:"GTCO", name:"Guaranty Trust Holding Co.", nativeNGN:48.00, price:48.00/NGN_PER_USD, market:"NGX"},
+  {sym:"BUAFOODS", name:"BUA Foods Plc", nativeNGN:98.00, price:98.00/NGN_PER_USD, market:"NGX"},
+  {sym:"AIRTELAFRI", name:"Airtel Africa Plc", nativeNGN:1950.00, price:1950.00/NGN_PER_USD, market:"NGX"}
+];
+const STOCK_META = {};
+STOCK_SEED.forEach(s=>{ STOCK_META[s.sym] = {market:s.market, name:s.name}; });
+
+function formatStockPrice(sym){
+  const p = prices[sym];
+  if(!p) return { main: "$0.00", sub: null };
+  if(p.currency === "NGN"){
+    return { main: "₦" + p.native.toLocaleString(undefined,{maximumFractionDigits:2}), sub: "≈ $" + p.price.toFixed(4) + " USD" };
+  }
+  return { main: "$" + p.price.toFixed(2), sub: null };
+}
+
+const BADGE_DEFS = [
+  {id:"first_trade", ic:"🎯", nm:"First Trade", ds:"Execute your first buy order", check:s=>s.transactions.length>=1},
+  {id:"diversified", ic:"🧩", nm:"Diversified", ds:"Hold 3+ different stocks at once", check:s=>Object.keys(s.portfolio).length>=3},
+  {id:"tax_master", ic:"🎓", nm:"Tax Master", ds:"Complete the tax brackets quiz", check:s=>s.quizzesDone.includes("tax")},
+  {id:"hot_streak", ic:"🔥", nm:"Hot Streak", ds:"Reach a portfolio gain of +5%", check:s=>portfolioGrowthPct(s)>=5},
+  {id:"big_saver", ic:"🐷", nm:"Big Saver", ds:"Complete 5 total trades", check:s=>s.transactions.length>=5},
+  {id:"scholar", ic:"📚", nm:"Scholar", ds:"Complete all 3 quizzes", check:s=>s.quizzesDone.length>=3}
+];
+
+const QUIZZES = {
+  compound: {
+    topic:"Compound Interest", meta:"3 questions · 30 XP",
+    qs:[
+      {q:"You invest $100 at 10% annual interest, compounded yearly. After 1 year, about how much do you have?",
+       opts:["$100","$110","$1,000","$90"], correct:1},
+      {q:"What makes compound interest grow faster over time than simple interest?",
+       opts:["You earn interest on your interest too","The bank adds bonus cash each year","Stock prices always go up","Taxes are lower on it"], correct:0},
+      {q:"Starting to invest at age 16 instead of 26 mainly helps because:",
+       opts:["Younger investors get lower fees","More years for compounding to work its magic","The stock market favors teenagers","It doesn't actually matter"], correct:1}
+    ]
+  },
+  tax: {
+    topic:"Tax Brackets", meta:"3 questions · 30 XP",
+    qs:[
+      {q:"In a marginal (progressive) tax bracket system, a higher tax rate applies to:",
+       opts:["All of your income, once you cross a threshold","Only the portion of income within that bracket","Only your first paycheck","Nothing — everyone pays the same rate"], correct:1},
+      {q:"'Gross income' refers to:",
+       opts:["Income after taxes and deductions","Income before any taxes are taken out","Only your savings","Your take-home pay"], correct:1},
+      {q:"'Net income' (take-home pay) is:",
+       opts:["Gross income minus taxes/deductions","Gross income plus bonuses","The same as gross income","Your total portfolio value"], correct:0}
+    ]
+  },
+  pe: {
+    topic:"P/E Ratio", meta:"3 questions · 30 XP",
+    qs:[
+      {q:"P/E ratio stands for:",
+       opts:["Price-to-Earnings","Profit-to-Expense","Percent Earned","Price-to-Equity"], correct:0},
+      {q:"A P/E ratio helps investors understand:",
+       opts:["How much stock a company has","How much investors pay per dollar of company earnings","The company's tax rate","The company's employee count"], correct:1},
+      {q:"All else equal, a very high P/E ratio compared to peers often suggests:",
+       opts:["The stock is definitely undervalued","Investors expect strong future growth (or it's overpriced)","The company is bankrupt","The company pays no taxes"], correct:1}
+    ]
+  }
+};
+
+const RIVALS = [
+  {name:"Maya K.", growth:14.2, color:"#3DDC97"},
+  {name:"Jordan P.", growth:9.8, color:"#F2B705"},
+  {name:"Alex R.", growth:6.5, color:"#7C9FFF"},
+  {name:"Sam T.", growth:2.1, color:"#FF9F6B"},
+  {name:"Riley B.", growth:-3.4, color:"#FF6B6B"}
+];
+
+/* ================= AUTH / ACCOUNTS =================
+   Fully standalone — no backend server needed. Account records are
+   stored via window.storage (which falls back to the browser's own
+   localStorage automatically — see the polyfill near the top of this
+   script). Passwords are hashed with SHA-256 + a per-account salt before
+   ever touching storage; they're never stored in plain text. This is a
+   prototype-grade auth flow appropriate for a learning demo — not a
+   substitute for a real backend if this were ever handling real users.
+================================================= */
+const USERS_INDEX_KEY = "finteens-users-index";
+const SESSION_KEY = "finteens-session";
+
+async function sha256Hex(text){
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+async function hashPassword(password, email){
+  return sha256Hex("finteens-salt::" + email.toLowerCase().trim() + "::" + password);
+}
+function stateKeyFor(email){
+  return "finteens-state-v1::" + email.toLowerCase().trim();
+}
+
+async function loadUsersIndex(){
+  try{
+    const res = await window.storage.get(USERS_INDEX_KEY, false);
+    if(res && res.value) return JSON.parse(res.value);
+  }catch(e){ /* not created yet */ }
+  return [];
+}
+async function saveUsersIndex(users){
+  await window.storage.set(USERS_INDEX_KEY, JSON.stringify(users), false);
+}
+async function getSession(){
+  try{
+    const res = await window.storage.get(SESSION_KEY, false);
+    if(res && res.value) return JSON.parse(res.value);
+  }catch(e){ /* none */ }
+  return null;
+}
+async function setSession(email){
+  await window.storage.set(SESSION_KEY, JSON.stringify({email:email.toLowerCase().trim()}), false);
+}
+async function clearSession(){
+  try{ await window.storage.delete(SESSION_KEY, false); }catch(e){ /* fine */ }
+}
+
+let currentAccount = null; // {email, username, passwordHash, createdAt}
+
+function isValidEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+/* ================= ADMIN SIGNUP LOG (optional) =================
+   If you deploy the companion Google Apps Script and paste its Web App
+   URL below, every successful signup quietly sends {username, email,
+   when} to it so you (the admin) can see new signups in a Google Sheet.
+   Passwords are NEVER sent here. Leave the URL blank/unchanged to skip
+   this entirely — nothing else in the app depends on it. */
+const ADMIN_SIGNUP_LOG_URL = ""; // paste your Apps Script /exec URL here, e.g. "https://script.google.com/macros/s/AKfycb.../exec"
+
+function logSignupForAdmin(username, email){
+  if(!ADMIN_SIGNUP_LOG_URL) return;
+  try{
+    const body = new URLSearchParams({ username, email, when: new Date().toISOString() });
+    fetch(ADMIN_SIGNUP_LOG_URL, { method:"POST", mode:"no-cors", body }).catch(()=>{});
+  }catch(e){ /* never let logging failures affect signup itself */ }
+}
+
+async function doSignup(username, email, password, password2, ackAge){
+  username = username.trim();
+  email = email.trim().toLowerCase();
+  if(username.length < 2) return "Enter a username (2+ characters).";
+  if(!isValidEmail(email)) return "Enter a valid email address.";
+  if(password.length < 8) return "Password must be at least 8 characters.";
+  if(password !== password2) return "Passwords don't match.";
+  if(!ackAge) return "Please confirm you have permission to use this app.";
+
+  const users = await loadUsersIndex();
+  if(users.some(u=>u.email===email)) return "An account with that email already exists — try logging in.";
+
+  const passwordHash = await hashPassword(password, email);
+  const account = { email, username, passwordHash, createdAt: new Date().toISOString() };
+  users.push(account);
+  await saveUsersIndex(users);
+  await setSession(email);
+  currentAccount = account;
+  logSignupForAdmin(username, email);
+  return null; // no error = success
+}
+
+async function doLogin(email, password){
+  email = email.trim().toLowerCase();
+  const users = await loadUsersIndex();
+  const match = users.find(u=>u.email===email);
+  if(!match) return "No account found with that email.";
+  const hash = await hashPassword(password, email);
+  if(hash !== match.passwordHash) return "Incorrect password.";
+  await setSession(email);
+  currentAccount = match;
+  return null;
+}
+
+async function doLogout(){
+  saveState(true); // flush any pending save immediately
+  await clearSession();
+  currentAccount = null;
+  state = null;
+  document.getElementById("app").style.display = "none";
+  document.getElementById("authScreen").style.display = "flex";
+  document.getElementById("liEmail").value = "";
+  document.getElementById("liPassword").value = "";
+}
+
+async function changePassword(current, next){
+  if(!currentAccount) return "You're not logged in.";
+  const hash = await hashPassword(current, currentAccount.email);
+  if(hash !== currentAccount.passwordHash) return "Current password is incorrect.";
+  if(next.length < 8) return "New password must be at least 8 characters.";
+  const users = await loadUsersIndex();
+  const idx = users.findIndex(u=>u.email===currentAccount.email);
+  if(idx===-1) return "Account not found.";
+  currentAccount.passwordHash = await hashPassword(next, currentAccount.email);
+  users[idx] = currentAccount;
+  await saveUsersIndex(users);
+  return null;
+}
+
+/* ================= THEME (dark / light) ================= */
+const THEME_KEY = "finteens-theme-pref";
+
+function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+async function loadThemePref(){
+  try{
+    const res = await window.storage.get(THEME_KEY, false);
+    if(res && res.value) return JSON.parse(res.value).theme;
+  }catch(e){ /* no preference saved yet */ }
+  // Fall back to the visitor's OS-level preference if we have no saved choice
+  return (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+}
+async function saveThemePref(theme){
+  try{ await window.storage.set(THEME_KEY, JSON.stringify({theme}), false); }
+  catch(e){ console.error("theme save failed", e); }
+}
+function applyTheme(theme){
+  document.documentElement.setAttribute("data-theme", theme);
+  const btn = document.getElementById("themeToggle");
+  btn.textContent = theme === "light" ? "🌙" : "☀️";
+  btn.title = theme === "light" ? "Switch to dark mode" : "Switch to light mode";
+}
+document.getElementById("themeToggle").addEventListener("click", async ()=>{
+  const next = document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light";
+  applyTheme(next);
+  await saveThemePref(next);
+  // Chart.js bakes colors in at creation time, so re-render any chart on screen
+  if(state && currentAccount){
+    if(document.getElementById("view-dashboard").classList.contains("active")) renderDashboard();
+    if(document.getElementById("view-tax").classList.contains("active")) renderTax();
+    if(document.getElementById("view-budget").classList.contains("active")) renderBudget();
+  }
+});
+
+/* ================= TOOLTIPS, ACCORDION & "GO TO" BUTTONS =================
+   Event delegation on document so this works regardless of which view is
+   currently visible, and for content added after initial page load. */
+document.addEventListener("click", (e)=>{
+  const infoBtn = e.target.closest(".info-ic");
+  if(infoBtn){
+    const wasOpen = infoBtn.classList.contains("open");
+    document.querySelectorAll(".info-ic.open").forEach(el=>el.classList.remove("open"));
+    if(!wasOpen) infoBtn.classList.add("open");
+    e.stopPropagation();
+    return;
+  }
+  // clicking anywhere else closes any open tooltip
+  document.querySelectorAll(".info-ic.open").forEach(el=>el.classList.remove("open"));
+
+  const accHead = e.target.closest(".accordion-head");
+  if(accHead){
+    accHead.closest(".accordion-item").classList.toggle("open");
+    return;
+  }
+
+  const gotoBtn = e.target.closest("[data-goto]");
+  if(gotoBtn){
+    switchView(gotoBtn.dataset.goto);
+    return;
+  }
+});
+
+/* ================= STATE ================= */
+let state = null;
+
+function freshState(){
+  return {
+    cash: 10000,
+    portfolio: {},           // sym -> {shares, avgPrice}
+    transactions: [],        // {id,symbol,type,shares,price,date}
+    xp: 0,
+    badges: [],
+    quizzesDone: [],
+    valueHistory: [10000],
+    username: currentAccount ? currentAccount.username : "You"
+  };
+}
+
+async function loadState(){
+  const key = stateKeyFor(currentAccount.email);
+  try{
+    const res = await window.storage.get(key, false);
+    if(res && res.value){ state = JSON.parse(res.value); return; }
+  }catch(e){ /* key not found, fall through */ }
+  state = freshState();
+}
+
+let saveTimer=null;
+function saveState(immediate){
+  const key = stateKeyFor(currentAccount.email);
+  const doSave = async ()=>{
+    try{ await window.storage.set(key, JSON.stringify(state), false); }
+    catch(e){ console.error("save failed", e); }
+  };
+  if(immediate){ clearTimeout(saveTimer); doSave(); return; }
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(doSave, 400);
+}
+
+/* ================= MOCK MARKET ================= */
+/* ================= LIVE / SIMULATED PRICE DATA =================
+   By default every stock's price is simulated (random drift), same as
+   before — the app works with zero setup. If you paste a free Finnhub
+   API key below, the 10 US stocks switch to REAL live quotes instead.
+
+   Get a free key at https://finnhub.io/register (takes ~1 minute, no
+   card required), then paste it here. Nigerian Exchange (NGX) stocks
+   stay simulated regardless — there's no free, browser-callable
+   real-time API for NGX, so those are clearly labeled "SIMULATED" in
+   the app rather than pretending otherwise.
+
+   Heads up: any API key placed here is visible to anyone who views this
+   page's source, since there's no backend to hide it behind. That's fine
+   for a free-tier personal-use key like Finnhub's, but never paste a
+   paid or sensitive key into a client-side file like this one.
+================================================= */
+const FINNHUB_API_KEY = ""; // paste a free key from finnhub.io to enable real US stock prices
+const PRICE_HISTORY_LEN = 40;
+
+let prices = {}; // sym -> {price(USD), prevClose, native, currency, market, name, isLive}
+let priceHistory = {}; // sym -> [price, price, ...] most-recent-last, capped to PRICE_HISTORY_LEN
+
+function isLiveEnabled(sym){
+  return Boolean(FINNHUB_API_KEY) && prices[sym] && prices[sym].market === "US";
+}
+
+function pushHistory(sym, price){
+  if(!priceHistory[sym]) priceHistory[sym] = [];
+  priceHistory[sym].push(price);
+  if(priceHistory[sym].length > PRICE_HISTORY_LEN) priceHistory[sym].shift();
+}
+
+function seedPrices(){
+  STOCK_SEED.forEach(s=>{
+    prices[s.sym] = {
+      symbol: s.sym,
+      price: s.price,
+      prevClose: s.price,
+      native: s.market==="NGX" ? s.nativeNGN : s.price,
+      currency: s.market==="NGX" ? "NGN" : "USD",
+      market: s.market,
+      name: s.name
+    };
+    pushHistory(s.sym, s.price);
+  });
+}
+seedPrices();
+
+function tickMarket(){
+  Object.values(prices).forEach(p=>{
+    if(isLiveEnabled(p.symbol)) return; // real quotes are updated separately by fetchRealPrices()
+    const drift = (Math.random()-0.5) * (p.price*0.012);
+    p.price = Math.max(0.0001, p.price + drift);
+    p.native = p.currency==="NGN" ? p.price*NGN_PER_USD : p.price;
+    pushHistory(p.symbol, p.price);
+  });
+}
+
+/** Fetches real quotes for the US stocks from Finnhub. No-op if no API key is set. */
+async function fetchRealPrices(){
+  if(!FINNHUB_API_KEY) return;
+  const usSymbols = STOCK_SEED.filter(s=>s.market==="US").map(s=>s.sym);
+  for(const sym of usSymbols){
+    try{
+      const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${sym}&token=${FINNHUB_API_KEY}`);
+      if(!res.ok) continue;
+      const data = await res.json();
+      if(typeof data.c === "number" && data.c > 0){
+        prices[sym].price = data.c;
+        prices[sym].native = data.c;
+        prices[sym].prevClose = typeof data.pc === "number" && data.pc > 0 ? data.pc : prices[sym].prevClose;
+        pushHistory(sym, data.c);
+      }
+    }catch(e){ /* network hiccup — keep last known price, try again next cycle */ }
+  }
+}
+
+function portfolioMarketValue(s){
+  let v=0;
+  for(const sym in s.portfolio){ v += s.portfolio[sym].shares * (prices[sym]? prices[sym].price : s.portfolio[sym].avgPrice); }
+  return v;
+}
+function portfolioGrowthPct(s){
+  const total = s.cash + portfolioMarketValue(s);
+  return ((total-10000)/10000)*100;
+}
+function xpForLevel(l){ return l*100; }
+function levelFromXp(xp){
+  let lvl=1, remaining=xp;
+  while(remaining >= xpForLevel(lvl)){ remaining -= xpForLevel(lvl); lvl++; }
+  return {level:lvl, into:remaining, need:xpForLevel(lvl)};
+}
+
+/* ================= TOASTS ================= */
+function toast(msg){
+  const wrap = document.getElementById("toastWrap");
+  const el = document.createElement("div");
+  el.className="toast"; el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.style.transition="opacity .3s ease"; el.style.opacity="0"; setTimeout(()=>el.remove(),300); }, 3200);
+}
+
+function addXp(amount, reason){
+  state.xp += amount;
+  toast(`+${amount} XP — ${reason}`);
+  checkBadges();
+  saveState();
+  renderXp();
+}
+
+function checkBadges(){
+  if(!state.badges) state.badges=[];
+  BADGE_DEFS.forEach(b=>{
+    if(!state.badges.includes(b.id) && b.check(state)){
+      state.badges.push(b.id);
+      toast(`🏅 Badge unlocked: ${b.nm}`);
+    }
+  });
+}
+
+/* ================= WELCOME TOUR =================
+   Shown automatically right after a fresh signup or login (not on a
+   page reload / restored session — see enterApp()'s preserveView flag)
+   to explain the app's purpose and walk through every nav button. */
+const TOUR_HIDE_KEY = "finteens-hide-tour";
+
+const TOUR_STEPS = [
+  {
+    icon: "👋",
+    title: "Welcome to FinTeens!",
+    body: "This is a safe space to practice investing with $10,000 in pretend money — real skills, zero real risk. You'll trade simulated stocks, learn how taxes and budgeting actually work, and earn XP and badges along the way. Let's walk through what each part of the app does."
+  },
+  {
+    icon: "🎓",
+    title: "Education",
+    body: "The tab you're on first. It covers the theory before you jump in — what a stock actually is, risk vs. reward, diversification, compound interest, and a full glossary of investing terms. Come back here anytime you want a refresher."
+  },
+  {
+    icon: "◆ ⇄",
+    title: "Dashboard & Trade",
+    body: "Dashboard is your home base — cash, total portfolio value, profit/loss, and everything you currently own. Trade is where you actually buy and sell — a live watchlist covering both US stocks and Nigeria's exchange (NGX), with prices that drift in real time."
+  },
+  {
+    icon: "% ▤",
+    title: "Tax Sim & Budget",
+    body: "Two 'Adulting Simulator' tools. Tax Sim shows how income tax brackets and capital gains actually work — plus the legal strategies real investors use to lower their bill. Budget lets you play with monthly income vs. expenses vs. savings on a simple slider."
+  },
+  {
+    icon: "▲ ✦",
+    title: "Leaderboard, Badges & Quizzes",
+    body: "Leaderboard ranks everyone by percentage growth, not dollar amount — smart, steady investing wins over big risky bets. Badges & Quizzes is where you earn XP: six unlockable badges, and three short quizzes that reward you for actually learning the material."
+  },
+  {
+    icon: "●",
+    title: "Profile — and you're set!",
+    body: "Profile shows your level, XP, trade count, and badge progress, plus lets you change your password. One more thing: the 🌙/☀️ button in the top corner switches dark/light mode anytime. That's the whole tour — go explore!"
+  }
+];
+let tourIdx = 0;
+
+async function shouldShowTour(){
+  try{
+    const res = await window.storage.get(TOUR_HIDE_KEY, false);
+    if(res && res.value) return JSON.parse(res.value).hide !== true;
+  }catch(e){ /* no preference saved — show it */ }
+  return true;
+}
+async function saveTourHidePref(hide){
+  try{ await window.storage.set(TOUR_HIDE_KEY, JSON.stringify({hide}), false); }
+  catch(e){ console.error("tour preference save failed", e); }
+}
+
+function openTour(){
+  tourIdx = 0;
+  document.getElementById("tourHideCheck").checked = false;
+  renderTourStep();
+  document.getElementById("tourModalBg").classList.add("show");
+}
+function closeTour(){
+  document.getElementById("tourModalBg").classList.remove("show");
+  if(document.getElementById("tourHideCheck").checked) saveTourHidePref(true);
+}
+function renderTourStep(){
+  const step = TOUR_STEPS[tourIdx];
+  document.getElementById("tourIcon").textContent = step.icon;
+  document.getElementById("tourTitle").textContent = step.title;
+  document.getElementById("tourBody").textContent = step.body;
+  document.getElementById("tourProg").innerHTML = TOUR_STEPS.map((_,i)=>`<span class="${i<=tourIdx?'done':''}"></span>`).join("");
+  document.getElementById("tourBackBtn").style.visibility = tourIdx===0 ? "hidden" : "visible";
+  const isLast = tourIdx === TOUR_STEPS.length-1;
+  document.getElementById("tourNextBtn").textContent = isLast ? "Let's get started 🚀" : "Next";
+}
+document.getElementById("tourBackBtn").addEventListener("click", ()=>{
+  if(tourIdx>0){ tourIdx--; renderTourStep(); }
+});
+document.getElementById("tourNextBtn").addEventListener("click", ()=>{
+  if(tourIdx < TOUR_STEPS.length-1){ tourIdx++; renderTourStep(); }
+  else closeTour();
+});
+document.getElementById("tourSkipBtn").addEventListener("click", closeTour);
+document.getElementById("tourClose").addEventListener("click", closeTour);
+document.getElementById("tourModalBg").addEventListener("click", (e)=>{ if(e.target.id==="tourModalBg") closeTour(); });
+
+/* ================= NAV / VIEWS ================= */
+const LAST_VIEW_KEY = "finteens-last-view";
+function switchView(name){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.getElementById("view-"+name).classList.add("active");
+  document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active", b.dataset.view===name));
+  try{ sessionStorage.setItem(LAST_VIEW_KEY, name); }catch(e){ /* private browsing etc — fine to skip */ }
+  if(name==="dashboard") renderDashboard();
+  if(name==="trade") renderWatchlist();
+  if(name==="tax") renderTax();
+  if(name==="budget") renderBudget();
+  if(name==="leaderboard") renderLeaderboard();
+  if(name==="learn") { renderBadges(); renderQuizzes(); }
+  if(name==="profile") renderProfile();
+}
+document.querySelectorAll(".navbtn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{ switchView(btn.dataset.view); closeMobileNav(); });
+});
+
+/* ---- Mobile hamburger drawer ---- */
+function openMobileNav(){
+  document.getElementById("mainNav").classList.add("mobile-open");
+  document.getElementById("navBackdrop").classList.add("show");
+}
+function closeMobileNav(){
+  document.getElementById("mainNav").classList.remove("mobile-open");
+  document.getElementById("navBackdrop").classList.remove("show");
+}
+document.getElementById("hamburgerBtn").addEventListener("click", openMobileNav);
+document.getElementById("navCloseBtn").addEventListener("click", closeMobileNav);
+document.getElementById("navBackdrop").addEventListener("click", closeMobileNav);
+document.getElementById("logoutBtn").addEventListener("click", closeMobileNav);
+
+/* ================= TICKER (signature element) ================= */
+function renderTicker(){
+  const track = document.getElementById("tickerTrack");
+  const stocks = Object.values(prices);
+  if(stocks.length === 0){ track.innerHTML = ""; return; }
+  const build = ()=> stocks.map(p=>{
+    const chg = ((p.price-p.prevClose)/p.prevClose)*100;
+    const dir = chg>=0?"up":"down";
+    const arrow = chg>=0?"▲":"▼";
+    const fp = formatStockPrice(p.symbol);
+    return `<span class="tick"><b>${p.symbol}</b> ${fp.main} <span class="${dir}">${arrow} ${Math.abs(chg).toFixed(2)}%</span></span>`;
+  }).join("");
+  track.innerHTML = build() + build(); // duplicate for seamless loop
+}
+
+/* ================= DASHBOARD ================= */
+let valueChart, allocChart, taxChart, budgetChart;
+
+function renderXp(){
+  const {level, into, need} = levelFromXp(state.xp);
+  document.getElementById("navUserLine").textContent = `Level ${level} Trader`;
+  document.getElementById("xpNowLbl").textContent = `${into} XP`;
+  document.getElementById("xpNextLbl").textContent = `/ ${need}`;
+  document.getElementById("xpFill").style.width = Math.min(100,(into/need*100)) + "%";
+}
+
+function renderDashboard(){
+  const mv = portfolioMarketValue(state);
+  const total = state.cash + mv;
+  const pl = total - 10000;
+  const plPct = (pl/10000*100);
+
+  document.getElementById("dCash").textContent = fmt$(state.cash);
+  document.getElementById("dTotal").textContent = fmt$(total);
+  const plEl = document.getElementById("dPL");
+  plEl.textContent = (pl>=0?"+":"") + fmt$(pl);
+  plEl.className = "stat-value " + (pl>=0?"pos":"neg");
+  const plPctEl = document.getElementById("dPLPct");
+  plPctEl.textContent = (plPct>=0?"+":"") + plPct.toFixed(2) + "%";
+  plPctEl.className = "stat-sub " + (plPct>=0?"pos":"neg");
+
+  // holdings table
+  const body = document.getElementById("holdingsBody");
+  const syms = Object.keys(state.portfolio);
+  if(syms.length===0){
+    body.innerHTML = `<tr><td colspan="6"><div class="empty-note">No holdings yet — head to Trade to make your first buy.</div></td></tr>`;
+  } else {
+    body.innerHTML = syms.map(sym=>{
+      const h = state.portfolio[sym];
+      const price = prices[sym]? prices[sym].price : h.avgPrice;
+      const mval = h.shares*price;
+      const gl = mval - h.shares*h.avgPrice;
+      const glPct = (gl/(h.shares*h.avgPrice))*100;
+      return `<tr>
+        <td><span class="sym">${sym}</span><span class="sym-name">${prices[sym]?prices[sym].name:""}</span></td>
+        <td>${h.shares}</td>
+        <td>$${h.avgPrice.toFixed(2)}</td>
+        <td>$${price.toFixed(2)}</td>
+        <td>${fmt$(mval)}</td>
+        <td class="${gl>=0?'pos':'neg'}">${gl>=0?'+':''}${fmt$(gl)} (${glPct>=0?'+':''}${glPct.toFixed(1)}%)</td>
+      </tr>`;
+    }).join("");
+  }
+
+  // value history chart
+  const histLabels = state.valueHistory.map((_,i)=>i===state.valueHistory.length-1?"Now":`T-${state.valueHistory.length-1-i}`);
+  if(valueChart) valueChart.destroy();
+  const dimC = cssVar('--dim-2'), gridC = cssVar('--border'), surfC = cssVar('--surface');
+  valueChart = new Chart(document.getElementById("valueChart"), {
+    type:"line",
+    data:{ labels:histLabels, datasets:[{
+      data: state.valueHistory, borderColor:"#3DDC97", backgroundColor:"rgba(61,220,151,0.12)",
+      fill:true, tension:0.35, pointRadius:0, borderWidth:2
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{ x:{ticks:{color:dimC,font:{size:10}}, grid:{color:gridC}},
+               y:{ticks:{color:dimC,font:{size:10}}, grid:{color:gridC}} } }
+  });
+
+  // allocation chart
+  if(allocChart) allocChart.destroy();
+  const allocLabels = syms.length? syms.concat(state.cash>0?["Cash"]:[]) : ["Cash"];
+  const allocData = syms.length? syms.map(s=>state.portfolio[s].shares*(prices[s]?prices[s].price:state.portfolio[s].avgPrice)).concat(state.cash>0?[state.cash]:[]) : [state.cash];
+  const palette = ["#3DDC97","#F2B705","#7C9FFF","#FF9F6B","#FF6B6B","#C792EA","#5AD1FF"];
+  allocChart = new Chart(document.getElementById("allocChart"), {
+    type:"doughnut",
+    data:{ labels:allocLabels, datasets:[{ data:allocData, backgroundColor: allocLabels.map((_,i)=>palette[i%palette.length]), borderColor:surfC, borderWidth:2 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:"bottom", labels:{color:dimC, boxWidth:10, font:{size:11}}}} }
+  });
+}
+
+function fmt$(n){
+  const sign = n<0?"-":"";
+  return sign+"$"+Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+/* ================= TRADE / WATCHLIST ================= */
+let currentMarketFilter = "all";
+function renderWatchlist(filter=""){
+  const body = document.getElementById("watchlistBody");
+  const f = filter.trim().toLowerCase();
+  const rows = Object.values(prices).filter(p=>{
+    const matchesFilter = !f || p.symbol.toLowerCase().includes(f) || p.name.toLowerCase().includes(f);
+    const matchesMarket = currentMarketFilter==="all" || p.market===currentMarketFilter;
+    return matchesFilter && matchesMarket;
+  }).sort((a,b)=>a.symbol.localeCompare(b.symbol));
+
+  if(rows.length === 0){
+    body.innerHTML = `<tr><td colspan="4"><div class="empty-note">${Object.keys(prices).length===0 ? "Loading live prices…" : "No stocks match your search."}</div></td></tr>`;
+    return;
+  }
+
+  body.innerHTML = rows.map(p=>{
+    const chg = ((p.price-p.prevClose)/p.prevClose)*100;
+    const dir = chg>=0?"pos":"neg";
+    const fp = formatStockPrice(p.symbol);
+    return `<tr class="row-click" data-sym="${p.symbol}">
+      <td><span class="sym">${p.symbol}${p.market==='NGX'?'<span class="flag-badge">🇳🇬</span>':'<span class="flag-badge">🇺🇸</span>'}</span><span class="sym-name">${p.name} <span class="data-badge ${isLiveEnabled(p.symbol)?'live':''}" style="font-size:8.5px;">${isLiveEnabled(p.symbol)?'🔴 LIVE':'SIM'}</span></span></td>
+      <td>${fp.main}${fp.sub?`<span class="ngn-note">${fp.sub}</span>`:''}</td>
+      <td class="${dir}">${chg>=0?'+':''}${chg.toFixed(2)}%</td>
+      <td><button class="btn btn-buy" data-open="${p.symbol}">Trade</button></td>
+    </tr>`;
+  }).join("");
+
+  body.querySelectorAll("[data-open]").forEach(b=>{
+    b.addEventListener("click", (e)=>{ e.stopPropagation(); openTradeModal(b.dataset.open); });
+  });
+  body.querySelectorAll("tr[data-sym]").forEach(tr=>{
+    tr.addEventListener("click", ()=> openTradeModal(tr.dataset.sym));
+  });
+}
+document.getElementById("stockSearch").addEventListener("input", (e)=> renderWatchlist(e.target.value));
+document.getElementById("marketTabs").addEventListener("click", (e)=>{
+  const btn = e.target.closest("button[data-market]");
+  if(!btn) return;
+  document.querySelectorAll("#marketTabs button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  currentMarketFilter = btn.dataset.market;
+  renderWatchlist(document.getElementById("stockSearch").value);
+});
+
+/* ---- Trade Modal ---- */
+let tradeMode = "buy";
+let tradeSym = null;
+let tradeChartInstance = null;
+
+function openTradeModal(sym){
+  tradeSym = sym;
+  tradeMode = "buy";
+  document.getElementById("tradeSym").textContent = sym;
+  document.getElementById("qtyInput").value = 1;
+  const live = isLiveEnabled(sym);
+  const badge = document.getElementById("tradeDataBadge");
+  badge.textContent = live ? "🔴 LIVE" : "SIMULATED";
+  badge.classList.toggle("live", live);
+  setTradeMode("buy");
+  updateTradeSummary();
+  renderTradeChart();
+  document.getElementById("tradeModalBg").classList.add("show");
+}
+function closeTradeModal(){ document.getElementById("tradeModalBg").classList.remove("show"); }
+document.getElementById("tradeClose").addEventListener("click", closeTradeModal);
+document.getElementById("tradeCancel").addEventListener("click", closeTradeModal);
+document.getElementById("tradeModalBg").addEventListener("click", (e)=>{ if(e.target.id==="tradeModalBg") closeTradeModal(); });
+
+function renderTradeChart(){
+  const hist = priceHistory[tradeSym] || [prices[tradeSym].price];
+  const p = prices[tradeSym];
+  const isUp = hist[hist.length-1] >= hist[0];
+  if(tradeChartInstance) tradeChartInstance.destroy();
+  tradeChartInstance = new Chart(document.getElementById("tradeChart"), {
+    type:"line",
+    data:{ labels: hist.map((_,i)=>i), datasets:[{
+      data: hist, borderColor: isUp ? "#3DDC97" : "#FF6B6B",
+      backgroundColor: isUp ? "rgba(61,220,151,0.1)" : "rgba(255,107,107,0.1)",
+      fill:true, tension:0.35, pointRadius:0, borderWidth:2
+    }]},
+    options:{ responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{enabled:false}},
+      scales:{ x:{display:false}, y:{display:false} },
+      elements:{ line:{ capBezierPoints:true } }
+    }
+  });
+}
+
+function setTradeMode(mode){
+  tradeMode = mode;
+  document.getElementById("buyTabBtn").classList.toggle("active", mode==="buy");
+  document.getElementById("sellTabBtn").classList.toggle("active", mode==="sell");
+  document.getElementById("qtyLabel").textContent = mode==="buy" ? "Shares to buy" : "Shares to sell";
+  const confirmBtn = document.getElementById("tradeConfirm");
+  confirmBtn.textContent = mode==="buy" ? "Confirm Buy" : "Confirm Sell";
+  confirmBtn.className = "btn " + (mode==="buy" ? "btn-buy" : "btn-sell");
+  updateTradeSummary();
+}
+document.getElementById("buyTabBtn").addEventListener("click", ()=>setTradeMode("buy"));
+document.getElementById("sellTabBtn").addEventListener("click", ()=>setTradeMode("sell"));
+document.getElementById("qtyInput").addEventListener("input", updateTradeSummary);
+
+function updateTradeSummary(){
+  const p = prices[tradeSym];
+  const fp = formatStockPrice(tradeSym);
+  document.getElementById("tradePriceLine").textContent = `${fp.main} per share` + (fp.sub ? ` (${fp.sub})` : "");
+  const qty = Math.max(0, parseInt(document.getElementById("qtyInput").value)||0);
+  const cost = qty*p.price;
+  document.getElementById("sumCash").textContent = fmt$(state.cash);
+  document.getElementById("sumCost").textContent = fmt$(cost);
+  document.getElementById("sumOwned").textContent = state.portfolio[tradeSym]? state.portfolio[tradeSym].shares : 0;
+  document.getElementById("tradeErr").textContent = "";
+}
+
+document.getElementById("tradeConfirm").addEventListener("click", ()=>{
+  const p = prices[tradeSym];
+  const qty = Math.max(0, parseInt(document.getElementById("qtyInput").value)||0);
+  const errEl = document.getElementById("tradeErr");
+  if(qty<=0){ errEl.textContent = "Enter a valid number of shares."; return; }
+
+  if(tradeMode==="buy"){
+    const cost = qty*p.price;
+    if(cost > state.cash){ errEl.textContent = "Not enough cash for this trade."; return; }
+    const existing = state.portfolio[tradeSym];
+    if(existing){
+      const totalShares = existing.shares+qty;
+      existing.avgPrice = (existing.avgPrice*existing.shares + p.price*qty)/totalShares;
+      existing.shares = totalShares;
+    } else {
+      state.portfolio[tradeSym] = {shares:qty, avgPrice:p.price};
+    }
+    state.cash -= cost;
+    state.transactions.push({ id:Date.now()+Math.random(), symbol:tradeSym, type:"buy", shares:qty, price:p.price, date:new Date().toISOString() });
+    addXp(state.transactions.length===1?15:5, state.transactions.length===1?"first trade executed!":"trade executed");
+    toast(`Bought ${qty} shares of ${tradeSym}`);
+  } else {
+    const existing = state.portfolio[tradeSym];
+    if(!existing || existing.shares < qty){ errEl.textContent = "You don't own that many shares."; return; }
+    const proceeds = qty*p.price;
+    const costBasis = qty*existing.avgPrice;
+    existing.shares -= qty;
+    if(existing.shares===0) delete state.portfolio[tradeSym];
+    state.cash += proceeds;
+    state.transactions.push({ id:Date.now()+Math.random(), symbol:tradeSym, type:"sell", shares:qty, price:p.price, date:new Date().toISOString() });
+    const gain = proceeds-costBasis;
+    addXp(5, gain>=0?"profitable sell":"trade executed");
+    toast(`Sold ${qty} shares of ${tradeSym} (${gain>=0?'+':''}${fmt$(gain)})`);
+  }
+  saveState();
+  closeTradeModal();
+  renderDashboard();
+});
+
+/* ================= TAX SIMULATOR ================= */
+const BRACKETS = [
+  {upTo:11000, rate:0.10, color:"#3DDC97"},
+  {upTo:44000, rate:0.12, color:"#8FE3B0"},
+  {upTo:95000, rate:0.22, color:"#F2B705"},
+  {upTo:182000, rate:0.24, color:"#FFB347"},
+  {upTo:Infinity, rate:0.32, color:"#FF6B6B"}
+];
+function calcTax(income){
+  let tax=0, prev=0;
+  for(const b of BRACKETS){
+    if(income>prev){
+      const taxable = Math.min(income,b.upTo)-prev;
+      tax += taxable*b.rate;
+      prev = b.upTo;
+    } else break;
+  }
+  return tax;
+}
+function renderTax(){
+  const income = parseInt(document.getElementById("incomeSlider").value);
+  const includeGains = document.getElementById("capGainsToggle").checked;
+  const gains = includeGains ? Math.max(0, portfolioMarketValue(state)+state.cash-10000) : 0;
+  document.getElementById("incomeLbl").textContent = "$"+income.toLocaleString();
+  const gainsTax = gains * 0.15; // simplified flat simulated cap-gains rate
+  const incomeTax = calcTax(income);
+  const totalTax = incomeTax + gainsTax;
+  const gross = income+gains;
+  const net = gross-totalTax;
+
+  document.getElementById("grossOut").textContent = fmt$(gross);
+  document.getElementById("taxOut").textContent = "-"+fmt$(totalTax);
+  document.getElementById("netOut").textContent = fmt$(net);
+
+  const bar = document.getElementById("bracketBar");
+  bar.innerHTML = BRACKETS.map(b=>{
+    const width = (Math.min(income,b.upTo) - (BRACKETS[BRACKETS.indexOf(b)-1]?.upTo||0));
+    return width>0 ? `<div class="bracket-seg" style="flex:${Math.max(width,1)};background:${b.color}">${(b.rate*100)|0}%</div>` : "";
+  }).join("");
+
+  if(taxChart) taxChart.destroy();
+  taxChart = new Chart(document.getElementById("taxChart"), {
+    type:"bar",
+    data:{ labels:["Gross","Tax","Net"], datasets:[{ data:[gross, totalTax, net], backgroundColor:["#7C9FFF","#FF6B6B","#3DDC97"], borderRadius:6 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ x:{ticks:{color:cssVar('--dim')}, grid:{display:false}}, y:{ticks:{color:cssVar('--dim-2')}, grid:{color:cssVar('--border')}} } }
+  });
+}
+document.getElementById("incomeSlider").addEventListener("input", renderTax);
+document.getElementById("capGainsToggle").addEventListener("change", renderTax);
+
+/* ================= BUDGET ================= */
+function renderBudget(){
+  const earn = parseInt(document.getElementById("earnSlider").value);
+  const ess = parseInt(document.getElementById("essSlider").value);
+  const fun = parseInt(document.getElementById("funSlider").value);
+  const savings = Math.max(0, earn-ess-fun);
+
+  document.getElementById("earnLbl").textContent = "$"+earn.toLocaleString();
+  document.getElementById("essLbl").textContent = "$"+ess.toLocaleString();
+  document.getElementById("funLbl").textContent = "$"+fun.toLocaleString();
+  document.getElementById("savingsOut").innerHTML = `Savings this month: <b class="${savings>=0?'pos':'neg'}">$${savings.toLocaleString()}</b>`;
+
+  if(budgetChart) budgetChart.destroy();
+  budgetChart = new Chart(document.getElementById("budgetChart"), {
+    type:"doughnut",
+    data:{ labels:["Essentials","Fun & Extras","Savings"], datasets:[{ data:[ess,fun,savings], backgroundColor:["#7C9FFF","#F2B705","#3DDC97"], borderColor:cssVar('--surface'), borderWidth:2 }]},
+    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:"bottom", labels:{color:cssVar('--dim-2'), boxWidth:10, font:{size:11}}}} }
+  });
+}
+["earnSlider","essSlider","funSlider"].forEach(id=> document.getElementById(id).addEventListener("input", renderBudget));
+
+/* ================= LEADERBOARD ================= */
+function renderLeaderboard(){
+  const myGrowth = portfolioGrowthPct(state);
+  const all = RIVALS.map(r=>({...r})).concat([{name:state.username, growth:myGrowth, color:"#F2B705", isYou:true}]);
+  all.sort((a,b)=>b.growth-a.growth);
+  const wrap = document.getElementById("leaderboardWrap");
+  wrap.innerHTML = all.map((p,i)=>{
+    const initials = p.name.split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
+    return `<div class="lb-row">
+      <div class="lb-rank ${i<3?'top':''}">#${i+1}</div>
+      <div class="lb-avatar" style="background:${p.color}22;color:${p.color};border:1px solid ${p.color}55;">${initials}</div>
+      <div class="lb-info"><div class="lb-name">${p.name}${p.isYou?'<span class="you-tag">YOU</span>':''}</div></div>
+      <div class="lb-growth ${p.growth>=0?'pos':'neg'}">${p.growth>=0?'+':''}${p.growth.toFixed(1)}%</div>
+    </div>`;
+  }).join("");
+}
+
+/* ================= BADGES ================= */
+function renderBadges(){
+  checkBadges();
+  const grid = document.getElementById("badgeGrid");
+  grid.innerHTML = BADGE_DEFS.map(b=>{
+    const earned = (state.badges||[]).includes(b.id);
+    return `<div class="badge ${earned?'earned':''}">
+      <div class="ic">${b.ic}</div>
+      <div class="nm">${b.nm}</div>
+      <div class="ds">${b.ds}</div>
+    </div>`;
+  }).join("");
+}
+
+/* ================= QUIZZES ================= */
+function renderQuizzes(){
+  const grid = document.getElementById("quizGrid");
+  grid.innerHTML = Object.entries(QUIZZES).map(([key,q])=>{
+    const done = state.quizzesDone.includes(key);
+    return `<div class="card quiz-card" data-quiz="${key}">
+      <div class="quiz-topic">${q.topic} ${done?'✅':''}</div>
+      <div class="quiz-meta">${done? 'Completed' : q.meta}</div>
+    </div>`;
+  }).join("");
+  grid.querySelectorAll("[data-quiz]").forEach(el=>{
+    el.addEventListener("click", ()=> openQuiz(el.dataset.quiz));
+  });
+}
+
+let quizState = null;
+function openQuiz(key){
+  const def = QUIZZES[key];
+  quizState = { key, idx:0, correctCount:0 };
+  document.getElementById("quizTitle").textContent = def.topic;
+  renderQuizProgress(def);
+  renderQuizQuestion(def);
+  document.getElementById("quizModalBg").classList.add("show");
+}
+function renderQuizProgress(def){
+  const prog = document.getElementById("quizProg");
+  prog.innerHTML = def.qs.map((_,i)=>`<span class="${i<quizState.idx?'done':''}"></span>`).join("");
+}
+function renderQuizQuestion(def){
+  const q = def.qs[quizState.idx];
+  const body = document.getElementById("quizBody");
+  body.innerHTML = `<p style="font-size:15px;margin-bottom:16px;">${q.q}</p>` +
+    q.opts.map((o,i)=>`<button class="q-option" data-i="${i}">${o}</button>`).join("");
+  body.querySelectorAll(".q-option").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const i = parseInt(btn.dataset.i);
+      body.querySelectorAll(".q-option").forEach((b,bi)=>{
+        b.style.pointerEvents="none";
+        if(bi===q.correct) b.classList.add("correct");
+        else if(bi===i) b.classList.add("wrong");
+      });
+      if(i===q.correct) quizState.correctCount++;
+      setTimeout(()=>{
+        quizState.idx++;
+        if(quizState.idx < def.qs.length){
+          renderQuizProgress(def);
+          renderQuizQuestion(def);
+        } else {
+          finishQuiz(def);
+        }
+      }, 900);
+    });
+  });
+}
+function finishQuiz(def){
+  document.getElementById("quizProg").querySelectorAll("span").forEach(s=>s.classList.add("done"));
+  const body = document.getElementById("quizBody");
+  const scored = quizState.correctCount;
+  const total = def.qs.length;
+  const xpEarned = scored*10;
+  body.innerHTML = `<div style="text-align:center;padding:14px 0;">
+    <div style="font-size:34px;margin-bottom:8px;">${scored===total?'🏆':'✨'}</div>
+    <div style="font-family:var(--display);font-size:18px;font-weight:600;margin-bottom:4px;">You scored ${scored}/${total}</div>
+    <div style="color:var(--dim);font-size:13px;margin-bottom:18px;">+${xpEarned} XP earned</div>
+    <button class="btn btn-gold" id="quizDoneBtn" style="width:100%;padding:12px;">Nice</button>
+  </div>`;
+  if(!state.quizzesDone.includes(quizState.key)) state.quizzesDone.push(quizState.key);
+  addXp(xpEarned, `${def.topic} quiz`);
+  document.getElementById("quizDoneBtn").addEventListener("click", ()=>{
+    document.getElementById("quizModalBg").classList.remove("show");
+    renderQuizzes(); renderBadges();
+  });
+}
+document.getElementById("quizClose").addEventListener("click", ()=> document.getElementById("quizModalBg").classList.remove("show"));
+document.getElementById("quizModalBg").addEventListener("click",(e)=>{ if(e.target.id==="quizModalBg") document.getElementById("quizModalBg").classList.remove("show"); });
+
+/* ================= PROFILE ================= */
+function renderProfile(){
+  if(!currentAccount || !state) return;
+  const initials = currentAccount.username.trim().slice(0,2).toUpperCase();
+  document.getElementById("profAvatar").textContent = initials;
+  document.getElementById("profName").textContent = currentAccount.username;
+  const [localPart, domain] = currentAccount.email.split("@");
+  const masked = localPart.length>2 ? localPart.slice(0,2)+"•••" : localPart+"•••";
+  document.getElementById("profEmail").textContent = masked + "@" + domain;
+  const {level} = levelFromXp(state.xp);
+  document.getElementById("profLevel").textContent = level;
+  document.getElementById("profXp").textContent = state.xp;
+  document.getElementById("profTrades").textContent = state.transactions.length;
+  document.getElementById("profBadges").textContent = (state.badges||[]).length;
+  const joined = new Date(currentAccount.createdAt);
+  document.getElementById("profJoined").textContent = joined.toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
+}
+
+document.getElementById("pwSubmit").addEventListener("click", async ()=>{
+  const cur = document.getElementById("pwCurrent").value;
+  const next = document.getElementById("pwNew").value;
+  const err = document.getElementById("pwErr");
+  err.textContent = "";
+  const result = await changePassword(cur, next);
+  if(result){ err.textContent = result; return; }
+  document.getElementById("pwCurrent").value = "";
+  document.getElementById("pwNew").value = "";
+  toast("Password updated.");
+});
+
+document.getElementById("logoutBtn").addEventListener("click", ()=>{ doLogout(); });
+
+/* ================= AUTH SCREEN WIRING ================= */
+document.getElementById("tabSignup").addEventListener("click", ()=>{
+  document.getElementById("tabSignup").classList.add("active");
+  document.getElementById("tabLogin").classList.remove("active");
+  document.getElementById("formSignup").classList.add("active");
+  document.getElementById("formLogin").classList.remove("active");
+});
+document.getElementById("tabLogin").addEventListener("click", ()=>{
+  document.getElementById("tabLogin").classList.add("active");
+  document.getElementById("tabSignup").classList.remove("active");
+  document.getElementById("formLogin").classList.add("active");
+  document.getElementById("formSignup").classList.remove("active");
+});
+
+document.getElementById("suSubmit").addEventListener("click", async ()=>{
+  const btn = document.getElementById("suSubmit");
+  const err = document.getElementById("suErr");
+  err.textContent = "";
+  btn.disabled = true; btn.textContent = "Creating account…";
+  try{
+    const error = await doSignup(
+      document.getElementById("suUsername").value,
+      document.getElementById("suEmail").value,
+      document.getElementById("suPassword").value,
+      document.getElementById("suPassword2").value,
+      document.getElementById("suParentCheck").checked
+    );
+    if(error){ err.textContent = error; return; }
+    await enterApp();
+  }catch(e){
+    console.error(e);
+    err.textContent = "Something went wrong creating your account. Check the browser console for details.";
+  }finally{
+    btn.disabled = false; btn.textContent = "Create Account";
+  }
+});
+
+document.getElementById("liSubmit").addEventListener("click", async ()=>{
+  const btn = document.getElementById("liSubmit");
+  const err = document.getElementById("liErr");
+  err.textContent = "";
+  btn.disabled = true; btn.textContent = "Logging in…";
+  try{
+    const error = await doLogin(
+      document.getElementById("liEmail").value,
+      document.getElementById("liPassword").value
+    );
+    if(error){ err.textContent = error; return; }
+    await enterApp();
+  }catch(e){
+    console.error(e);
+    err.textContent = "Something went wrong logging in. Check the browser console for details.";
+  }finally{
+    btn.disabled = false; btn.textContent = "Log In";
+  }
+});
+
+/* ================= MARKET LOOP ================= */
+setInterval(()=>{
+  tickMarket(); // no-op for any symbol currently getting real data
+  renderTicker();
+  if(!state || !currentAccount) return;
+  if(document.getElementById("view-trade").classList.contains("active")) renderWatchlist(document.getElementById("stockSearch").value);
+  if(document.getElementById("view-dashboard").classList.contains("active")) renderDashboard();
+}, 3500);
+
+// Separate, slower interval for real quotes — 10 symbols every 15s keeps
+// us safely under Finnhub's free-tier 60-calls/minute limit. Does nothing
+// if FINNHUB_API_KEY is left blank.
+setInterval(async ()=>{
+  await fetchRealPrices();
+  renderTicker();
+  if(document.getElementById("view-trade").classList.contains("active")) renderWatchlist(document.getElementById("stockSearch").value);
+  if(document.getElementById("view-dashboard").classList.contains("active")) renderDashboard();
+}, 15000);
+
+setInterval(()=>{
+  if(!state || !currentAccount) return;
+  const total = state.cash + portfolioMarketValue(state);
+  state.valueHistory.push(Math.round(total));
+  if(state.valueHistory.length>30) state.valueHistory.shift();
+  saveState();
+}, 15000);
+
+/* ================= INIT / SESSION ================= */
+async function enterApp(preserveView){
+  document.getElementById("authScreen").style.display = "none";
+  document.getElementById("app").style.display = "grid";
+  await loadState();
+  if(!state.badges) state.badges=[];
+  renderTicker();
+  renderXp();
+  renderDashboard();
+  renderWatchlist();
+  renderTax();
+  renderBudget();
+  renderLeaderboard();
+  renderBadges();
+  renderQuizzes();
+
+  // A brand-new signup/login always starts at Education (onboarding).
+  // A restored session (e.g. the page reloaded) returns to whatever tab
+  // was open before, instead of yanking the user back to the first tab.
+  let target = "education";
+  if(preserveView){
+    try{
+      const saved = sessionStorage.getItem(LAST_VIEW_KEY);
+      if(saved && document.getElementById("view-"+saved)) target = saved;
+    }catch(e){ /* private browsing etc — fine to skip */ }
+  }
+  switchView(target);
+
+  // The tour only fires for a genuine signup/login action, never for a
+  // restored session (so reloading the page doesn't re-show it), and
+  // respects the "don't show again" preference if the user set one.
+  if(!preserveView && await shouldShowTour()){
+    openTour();
+  }
+}
+
+async function init(){
+  applyTheme(await loadThemePref());
+  renderTicker(); // ticker runs even on the auth screen for atmosphere
+  const session = await getSession();
+  if(session && session.email){
+    const users = await loadUsersIndex();
+    const match = users.find(u=>u.email===session.email);
+    if(match){
+      currentAccount = match;
+      await enterApp(true); // this is a session restore (page load / reload), not a fresh login
+      return;
+    }
+  }
+  document.getElementById("authScreen").style.display = "flex";
+}
+init();
+
+})();
+</script>
+</body>
+</html>
